@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,withRouter } from 'react-router-dom';
 import axios from 'axios';
-
+import { useHistory } from "react-router-dom";
 class Signin extends Component {
     constructor(props) {
         super(props);
@@ -9,21 +9,10 @@ class Signin extends Component {
             email: '',
             password: '',
             userinfoid: '',
-            hasError: false
+            hasError: false,
+            lookingFor: ''
         };
-    }
-    componentDidMount() {
-        axios.get("user-informations")
-            .then(response => {
-                this.setState({
-                    userinfoid: response.data.user_id
-                });
-                //  $('select').selectpicker();
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            })
+        console.log(this.props)
     }
     submitUserLogin() {
         var user_id = null;
@@ -38,25 +27,74 @@ class Signin extends Component {
                 // console.log('User token', response.data.jwt);
                 localStorage.setItem("user", JSON.stringify(response.data.user));
                 localStorage.setItem("token", response.data.jwt);
+                
                 user_id = response.data.user.id;
-                axios.get("user-informations", {
-                    params: {
-                        user_id: user_id
-                    }
-                })
-                    .then(response => {
-                        if (response.data.length === 0) {
-                            this.submitUserInformation(user_id);
-                        } else {
-                            window.location.href = '/profileoverlay';
-                        }
-                    })
+                if(response.data.user.type == 1){
+                    console.log("response ====>",response.data);
+                    axios
+                        .get("user-informations", {
+                            params: {
+                            user_id: user_id
+                            }
+                        })
+                        .then(response => {
+                            this.setState({
+                                lookingFor: response?.data[0]?.looking_for
+                              });
+                            // lookingFor = response.data[0].looking_for;
+                            console.log("lookingFor",this.state.lookingFor);
+                            if(this.state.lookingFor === "Yes"){
+                                window.location.href = '/myprofile';
+                                console.log("lookingFor",this.state.lookingFor);
+                                
+                            }else{
+                                window.location.href = '/myprofile';
+                                console.log("lookingFor else",this.state.lookingFor);
+                            }
+                        })
+                }else{
+                    console.log("response ====>",response.data);
+                    axios
+                        .get("user-informations", {
+                            params: {
+                            user_id: user_id
+                            }
+                        })
+                        .then(response => {
+                            this.setState({
+                                lookingFor: response?.data[0]?.looking_for
+                              });
+                            // lookingFor = response.data[0].looking_for;
+                            console.log("lookingFor",this.state.lookingFor);
+                            if(this.state.lookingFor === "Yes"){
+                                window.location.href = '/clinicprofile';
+                                console.log("lookingFor",this.state.lookingFor);
+                                
+                            }else{
+                                window.location.href = '/clinicprofile';
+                                console.log("lookingFor else",this.state.lookingFor);
+                            }
+                        })
+                }
+                
+                // axios.get("user-informations", {
+                //     params: {
+                //         user_id: user_id
+                //     }
+                // })
+                //     .then(response => {
+                //         if (response.data.length === 0) {
+                //             this.submitUserInformation(user_id);
+                //         } else {
+                            // window.location.href = '/myprofile';
+                //         }
+                //     })
 
 
             })
             .catch(error => {
                 // Handle error.
-                console.log('An error occurred:', error.response);
+                console.log('An error occurred:', error);
                 this.setState({
                     hasError: 'Username and Password is invalid.',
                     forclass: "text-danger text-center error-msg"
@@ -183,7 +221,7 @@ class Signin extends Component {
                                                 <Link to="/forgotpassword">Forgot Password?</Link>
                                             </p>
                                             <p className="mb-0 fs-sm text-center text-muted">
-                                                Don't have an account yet? <Link to="/signup">Sign Up</Link>
+                                                Don't have an account yet? <Link to="/signupprofile">Sign Up</Link>
                                             </p>
                                             <div className="mt-5 sign-social mb-0 fs-sm text-center text-muted">
                                                 Or Login With

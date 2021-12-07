@@ -20,28 +20,29 @@ export default class Slidefifth extends Component {
                             <h2 className="over_title">Designation</h2>
                             <div className="overlay_content deignation_col">
                                 <div className="row justify-content-center">
+                                   
                                     <div className="col-sm-6 col-md-4">
                                         <a href="#" className="desig-col shadow">
-                                            <i className="fe fe-briefcase"></i>
+                                            <i className="fa fa-user-md"></i>
                                             <span>Dentist</span>
                                         </a>
                                     </div>
 
                                     <div className="col-sm-6 col-md-4">
                                         <a href="#" className="desig-col shadow">
-                                            <i className="fe fe-briefcase"></i>
+                                            <i className="fa fa-smile-o"></i>
                                             <span>Dental Hygienist</span>
                                         </a>
                                     </div>
 
                                     <div className="col-sm-6 col-md-4">
                                         <a href="#" className="desig-col shadow">
-                                            <i className="fe fe-briefcase"></i>
+                                            <i className="fa fa-info-circle"></i>
                                             <span>Dental Assistant</span>
                                         </a>
                                     </div>
 
-                                    <div className="col-sm-6 col-md-4">
+                                     <div className="col-sm-6 col-md-4">
                                         <a href="#" className="desig-col shadow">
                                             <i className="fe fe-briefcase"></i>
                                             <span>Denturist</span>
@@ -50,14 +51,14 @@ export default class Slidefifth extends Component {
 
                                     <div className="col-sm-6 col-md-4">
                                         <a href="#" className="desig-col shadow">
-                                            <i className="fe fe-briefcase"></i>
+                                            <i className="fa fa-cubes"></i>
                                             <span>Administrative/Management</span>
                                         </a>
                                     </div>
 
-                                    <div className="col-sm-6 col-md-4">
+                                     <div className="col-sm-6 col-md-4">
                                         <a href="#" className="desig-col shadow">
-                                            <i className="fe fe-briefcase"></i>
+                                            <i className="fa fa-pencil-square-o"></i>
                                             <span>Accounts</span>
                                         </a>
                                     </div>
@@ -69,6 +70,9 @@ export default class Slidefifth extends Component {
                                             <span>Dental Technician</span>
                                         </a>
                                     </div>
+
+                                  
+                                   
 
                                   
 

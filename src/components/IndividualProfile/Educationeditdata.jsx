@@ -60,7 +60,7 @@ class Educationeditdata extends Component {
             });
     }
     render() {
-        console.log(this.props);
+
         return (
             <div className="modal edit-modal fade" id={'educationinfo' + this.props.item.id} tabIndex="-1" role="dialog" aria-labelledby="educationinfoLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">

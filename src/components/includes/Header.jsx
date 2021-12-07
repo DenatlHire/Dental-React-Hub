@@ -11,8 +11,8 @@ class Header extends Component {
       const userinfo = JSON.parse(localStorage.getItem('user'));
 
       return (
-         <header className="App-header shadow">
-            <nav className="navbar navbar-expand-lg navbar-light bg-white">
+         <header className="App-header">
+            <nav className="navbar navbar-expand-lg navbar-light pt-5">
                <div className="container">
                   <Link className="navbar-brand" to="/">
                      <img src="/assets/img/brands/logo.png" className="navbar-brand-img" alt="..." />
@@ -24,7 +24,7 @@ class Header extends Component {
                      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                         <i className="fe fe-x"></i>
                      </button>
-                     <ul className="navbar-nav ml-auto">
+                     <ul className="navbar-nav m-auto">
                         <li className="nav-item">
                            <Link className="nav-link" to="/" aria-haspopup="true" aria-expanded="false">
                               Home</Link>
@@ -51,10 +51,10 @@ class Header extends Component {
                      <>
                         <div className="dropdown user-profile-dropdown">
                            <div className="dropdown-toggle font-weight-bold nav-link" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <i className="fe fe-user mr-1"></i> {userinfo.type == '2' ? userinfo.clinicname : userinfo.username}
+                              <i className="fe fe-user mr-1"></i> {userinfo ? userinfo.type == '2' ? userinfo.clinicname : userinfo.username : ""}
                            </div>
                            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <Link className="dropdown-item" to="/myprofile" aria-haspopup="true" aria-expanded="false">
+                              <Link className="dropdown-item" to={`${userinfo && userinfo.type == '2' ? '/clinicprofile' : '/myprofile'}`} aria-haspopup="true" aria-expanded="false">
                                  My Profile</Link>
                               <button className="dropdown-item" onClick={this.logout} aria-haspopup="true" aria-expanded="false">Log Out</button>
                            </div>

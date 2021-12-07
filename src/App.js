@@ -26,6 +26,14 @@ import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import ChangePassword from './components/ChangePassword/ChangePassword';
 import IndividualProfile from './components/IndividualProfile/IndividualProfile';
 import ProfileOverlay from "./components/ProfileOverlay/ProfileOverlay";
+import LoginProfile from "./components/LoginProfile/LoginProfile"
+import Individual from "./components/Individual/Individual"
+import IndividualInfoslide from "./components/Individual/IndividualInfoslide"
+import Clinic from "./components/Clinic/Clinic"
+import ClinicInfoslide from "./components/Clinic/ClinicInfoslide"
+import IndividualUser from "./components/Individual/IndividualUser"
+import ClinicUser from "./components/Clinic/ClinicUser"
+import SearchResult from "./components/Individual/SearchResult"
 
 import Header from './components/includes/Header';
 import Footer from './components/includes/Footer';
@@ -42,8 +50,10 @@ function App() {
         <div className="App">
             <Router>
                 <ScrollToTop />
-
-                <Header />
+                
+                <Route path="/" render={(props) => (props.location.pathname !== "/signupprofile" && props.location.pathname !== "/individual" && props.location.pathname !== "/clinic" && props.location.pathname !== "/register" && props.location.pathname !== "/clinicregister") && 
+                <Header />}>
+                </Route>
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route path="/about">
@@ -96,14 +106,44 @@ function App() {
                     <Route path="/notfound">
                         <Notfound />
                     </Route>
-                    <Route path="/myprofile">
+                    {/* <Route path="/myprofile">
                         <IndividualProfile />
-                    </Route>
+                    </Route> */}
                     <Route path="/profileoverlay">
-                        <ProfileOverlay />
+                        <Redirect to="/" push={true} />
                     </Route>
+                    <Route path="/signupprofile">
+                        <Redirect to="/" push={true} />
+                    </Route>
+                    <Route path="/individual">
+                        <Redirect to="/" push={true} />
+                    </Route>
+                    <Route path="/clinic">
+                        <Redirect to="/" push={true} />
+                    </Route>
+                    <Route path="/register">
+                       <Redirect to="/" push={true} />
+                    </Route>
+
+                    <Route path="/clinicregister">
+                        <Redirect to="/" push={true} />
+                    </Route>
+
+                    <Route path="/myprofile">
+                        <IndividualUser />
+                    </Route>
+                    <Route path="/clinicprofile">
+                        <ClinicUser />
+                    </Route>
+
+                    <Route path="/searchresult">
+                        <SearchResult />
+                    </Route>
+
                 </Switch>
-                <Footer />
+                <Route path="/" render={(props) => (props.location.pathname !== "/signupprofile" && props.location.pathname !== "/individual" && props.location.pathname !== "/clinic" && props.location.pathname !== "/register" && props.location.pathname !== "/clinicregister") && 
+                <Footer />}>
+                </Route>
             </Router>
         </div>
     ) : (
@@ -111,7 +151,9 @@ function App() {
             <Router>
                 <ScrollToTop />
 
-                <Header />
+                <Route path="/" render={(props) => (props.location.pathname !== "/signupprofile" && props.location.pathname !== "/individual" && props.location.pathname !== "/clinic" && props.location.pathname !== "/register" && props.location.pathname !== "/clinicregister") && 
+                <Header />}>
+                </Route>
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route path="/about">
@@ -164,14 +206,41 @@ function App() {
                     <Route path="/notfound">
                         <Notfound />
                     </Route>
-                    <Route path="/myprofile">
+                    {/* <Route path="/myprofile">
                         <Home />
-                    </Route>
+                    </Route> */}
                     <Route path="/profileoverlay">
                         <ProfileOverlay />
                     </Route>
+                    <Route path="/signupprofile">
+                        <LoginProfile />
+                    </Route>
+                    <Route path="/individual">
+                        <Individual />
+                    </Route>
+                    <Route path="/clinic">
+                        <Clinic />
+                    </Route>
+                    <Route path="/register">
+                        <IndividualInfoslide />
+                    </Route>
+                    <Route path="/clinicregister">
+                        <ClinicInfoslide />
+                    </Route>
+                    {/* <Route path="/myprofile">
+                        <IndividualUser />
+                    </Route> */}
+                    {/* <Route path="/clinicprofile">
+                        <ClinicUser />
+                    </Route> */}
+                    <Route path="/searchresult">
+                        <SearchResult />
+                    </Route>
+
                 </Switch>
-                <Footer />
+                <Route path="/" render={(props) => (props.location.pathname !== "/signupprofile" && props.location.pathname !== "/individual" && props.location.pathname !== "/clinic" && props.location.pathname !== "/register" && props.location.pathname !== "/clinicregister") && 
+                <Footer />}>
+                </Route>
             </Router>
         </div>
     );

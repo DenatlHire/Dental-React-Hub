@@ -22,7 +22,7 @@ export default class Slidethree extends Component {
                                                 <div className="col-12 col-md-6">
                                                     <div className="form-group">
                                                         <label className="form-label">Course Name</label>
-                                                        <i className="fe fe-credit-card"></i>
+                                                        <i className="fa fa-graduation-cap"></i>
                                                         <input className="form-control" id="" name="" type="text" placeholder="Course Name" value=""></input>
                                                     </div>
                                                 </div>
@@ -30,7 +30,7 @@ export default class Slidethree extends Component {
                                                 <div className="col-12 col-md-6">
                                                     <div className="form-group">
                                                         <label className="form-label">University/College</label>
-                                                        <i className="fe fe-home"></i>
+                                                        <i className="fa fa-university"></i>
                                                         <select className="selectoption custom-select form-control" name="" id="">
                                                             <option value="">Please Select University/College</option>
                                                             <option value="">12</option>
@@ -41,10 +41,10 @@ export default class Slidethree extends Component {
                                                     </div>
                                                 </div>
 
-                                                <div className="col-12 col-md-6">
+                                               <div className="col-12 col-md-6">
                                                     <div className="form-group">
                                                         <label className="form-label">Start Month</label>
-                                                        <i className="fe fe-calendar"></i>
+                                                        <i className="fa fa-calendar-check-o"></i>
                                                         <select className="selectoption custom-select form-control" name="" id="">
                                                             <option value="">Please Select Start Month</option>
                                                             <option value="">12</option>
@@ -58,7 +58,7 @@ export default class Slidethree extends Component {
                                                 <div className="col-12 col-md-6">
                                                     <div className="form-group">
                                                         <label className="form-label">Start Year</label>
-                                                        <i className="fe fe-calendar"></i>
+                                                        <i className="fa fa-calendar-check-o"></i>
                                                         <select className="selectoption custom-select form-control" name="" id="">
                                                             <option value="">Please Select Start Year</option>
                                                             <option value="">2000</option>
@@ -68,11 +68,10 @@ export default class Slidethree extends Component {
                                                         </select>
                                                     </div>
                                                 </div>
-
-                                                <div className="col-12 col-md-6">
+<div className="col-12 col-md-6">
                                                     <div className="form-group">
                                                         <label className="form-label">End Month</label>
-                                                        <i className="fe fe-calendar"></i>
+                                                        <i className="fa fa-calendar-times-o"></i>
                                                         <select className="selectoption custom-select form-control" name="" id="">
                                                             <option value="">Please Select End Month</option>
                                                             <option value="">2000</option>
@@ -86,7 +85,7 @@ export default class Slidethree extends Component {
                                                 <div className="col-12 col-md-6">
                                                     <div className="form-group">
                                                         <label className="form-label">End Year</label>
-                                                        <i className="fe fe-calendar"></i>
+                                                        <i className="fa fa-calendar-times-o"></i>
                                                         <select className="selectoption custom-select form-control" name="" id="">
                                                             <option value="">Please Select End Year</option>
                                                             <option value="">2000</option>
@@ -96,6 +95,7 @@ export default class Slidethree extends Component {
                                                         </select>
                                                     </div>
                                                 </div>
+                                             
 
                                             </div>
 

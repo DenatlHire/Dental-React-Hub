@@ -7,11 +7,11 @@ import axios from 'axios';
 
 
 
-//axios.defaults.baseURL = 'http://138.197.160.154:1337/';
-axios.defaults.baseURL = 'http://localhost:1337/';
+// axios.defaults.baseURL = 'http://563e-103-76-141-168.ngrok.io';
+axios.defaults.baseURL = 'http://138.197.160.154:1337';
 
 //window.baseURL = "http://138.197.160.154:1337";
-window.baseURL = "http://localhost:1337";
+window.baseURL = "http://138.197.160.154:1337";
 
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
