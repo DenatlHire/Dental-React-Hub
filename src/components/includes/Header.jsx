@@ -45,6 +45,12 @@ class Header extends Component {
                            <Link className="nav-link" to="/contact" aria-haspopup="true" aria-expanded="false">
                               Contact</Link>
                         </li>
+
+                        <li className="nav-item">
+                           <Link className="nav-link" to="/messaging" aria-haspopup="true" aria-expanded="false">
+                              <i class="fa fa-envelope" aria-hidden="true"></i>
+                           </Link>
+                        </li>
                      </ul>
                   </div>
                   {isAuthenticated ? (
