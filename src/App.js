@@ -190,9 +190,9 @@ function App() {
             <ClinicUser />
           </Route>
 
-          {/* <Route path="/searchresult">
+          <Route path="/searchresult">
             <SearchResult />
-          </Route> */}
+          </Route>
           <Route path="/findProfile">
             <FindProfile />
           </Route>

@@ -170,6 +170,7 @@ function Home(props) {
       <>
       <div className='search_result_wrap'>
       <div className='container'>
+      <div class="search_main_ttl"><h2>Welcome Back, {user.type == 1 ? user.firstname+' '+user.lastname : user.clinicname}! Here are some matches you may be interested in.</h2></div>
       {loading ? <div className="spinnerParent"><div id="loadingSearch"></div></div> :
       <>
       {
@@ -263,7 +264,7 @@ function Home(props) {
               })
                 
               :
-                <div className="in_result_box"><p className="no_data">No Data Found</p></div>
+                <div className="in_result_box"><p className="no_data">No Matches Found</p></div>
               }
         </InfiniteScroll>
         </>
@@ -362,7 +363,7 @@ function Home(props) {
             })
               
             :
-              <div className="in_result_box"><p className="no_data">No Data Found</p></div>
+              <div className="in_result_box"><p className="no_data">No Matches Found</p></div>
             }
             </InfiniteScroll>
         </> 

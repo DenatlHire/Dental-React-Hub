@@ -79,12 +79,10 @@ class Header extends Component {
                                  <Link className="nav-link" to="/blogs" aria-haspopup="true" aria-expanded="false">
                                     Blogs</Link>
                               </li> */}
-                              { userinfo.type == '2'&&
                               <li className="nav-item">
                                  <Link className="nav-link" to={ userinfo.type == '2' ? '/findProfile' : '/searchresult'} aria-haspopup="true" aria-expanded="false">
                                     Search Jobs</Link>
                               </li>
-                              }
                               {/* <li className="nav-item">
                                  <Link className="nav-link" to="/contact" aria-haspopup="true" aria-expanded="false">
                                     Contact</Link>

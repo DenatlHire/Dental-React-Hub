@@ -209,7 +209,7 @@ export default function SearchResult() {
     <div>
        <div className="search_result_wrap">
 
-            <div className="container t_search">
+            {/* <div className="container t_search">
             <div class="baner-search-box banner-search-job p-6">
               <form  onSubmit={(e)=>{filterQuery(e)}}>
               <div class="row align-items-center">
@@ -268,18 +268,13 @@ export default function SearchResult() {
                       onChange: locationChange,
                       isClearable:true
                     }}
-                    // error={!!errors.address}
                   />
-                  {/* <i className="fa fa-map-marker marker-location-icon"></i> */}
                 </div>
-                  {/* <Select className="basic-multi-select" options={LocationOptions} /> */}
-                  {/* <input type="text" class="form-control border-0 px-1" placeholder="Location..."/> */}
                   </div>
                 </div>
                 <div class="col-sm-4 col-lg-4">
                 <label>Experience (In Years)</label>
                   <div class="input-group input-group-lg"><span class="input-group-text border-0 pe-1"><i class="fe fe-map-pin"></i></span>
-                  {/* <Select className="basic-multi-select" options={RolesOptions} /> */}
                   <div className="f_group km_group">
                   <input className="form-control border-0 px-1"
                   type="number" min="0" placeholder="Experience" value={userExperience} onChange={(e)=>{setExperience(e.target.value)}} />
@@ -307,7 +302,7 @@ export default function SearchResult() {
               </div>
               </form>
             </div>
-            </div>
+            </div> */}
 
           <div className="container">
 
