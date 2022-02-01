@@ -4,7 +4,11 @@ import nl2br from 'react-newline-to-break';
 import axios from 'axios'
 
 class LoginProfile extends Component {
-   
+
+    componentDidMount(prevProps) {
+        // Typical usage (don't forget to compare props):
+        document.body.classList.remove('foo_shape_img');
+      }
     
     render() {
         return (
@@ -27,8 +31,8 @@ class LoginProfile extends Component {
                        </h2>
                      
                      <div className="login_btn">
-                         <Link className="login_btn_in" to="/individual" title="Individual">Individual</Link>
-                         <Link className="login_btn_in" to="/clinic" title="Clinic">Clinic</Link>
+                         <Link className="login_btn_in" to="/register" title="Individual">Individual</Link>
+                         <Link className="login_btn_in" to="/clinicregister" title="Clinic">Clinic</Link>
                      </div>
 
                    </div>

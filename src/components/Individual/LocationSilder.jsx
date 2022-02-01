@@ -8,7 +8,8 @@ import { Pagination } from "./pagination";
 import Autocomplete from "react-google-autocomplete";
 import GooglePlacesAutocomplete, {
   geocodeByAddress,
-  getLatLng
+  getLatLng,
+  geocodeByLatLng
 } from "react-google-places-autocomplete";
 
 function LocationSilder({
@@ -29,9 +30,10 @@ function LocationSilder({
   const validationSchema = yup.object().shape({
     address: yup.string().required("Please select a valid address."),
   });
-  const [Location, setLocation] = useState(null);
+  const [AddressValue, setAddress] = useState('');
   const {
     setValue,
+    getValues,
     handleSubmit,
     formState: { errors },
     register,
@@ -43,16 +45,47 @@ function LocationSilder({
      ...user,
     },
   });
+  useEffect(() => {
+    if(getValues('address')){
+      console.log(getValues())
+      setAddress({"label":getValues('address')})
+    }
+  }, []);
 const locationChange = (data) =>{
   console.log(data);
-  setValue('address',data.label)
-  geocodeByAddress(data.label)
-  .then(results => getLatLng(results[0]))
-  .then(({ lat, lng }) =>{
-  // setData({ ...data, latitude: lat, longitude: lng })
-  setValue("latitude",lat)
-  setValue("longitude",lng)
-});
+  if(data){
+    setValue('address',data.label)
+    setAddress(data)
+    geocodeByAddress(data.label)
+    .then(results => getLatLng(results[0]))
+    .then(({ lat, lng }) =>{
+    // setData({ ...data, latitude: lat, longitude: lng })
+    setValue("latitude",lat)
+    setValue("longitude",lng)
+  });
+}else{
+  setValue('address','')
+  setValue("latitude",'')
+  setAddress('')
+    setValue("longitude",'')
+}
+}
+const findLocation = () =>{
+  navigator.geolocation.getCurrentPosition(function(position) {
+    console.log("current",position);
+    let latitude = position.coords.latitude
+    let longitude = position.coords.longitude
+    geocodeByLatLng({ lat:latitude, lng: longitude })
+    .then(results => {
+      let address = results[0].formatted_address;
+      console.log(results)
+      setAddress({"label":address})
+      setValue('address', address)
+      setValue("latitude", latitude)
+      setValue("longitude", longitude)
+    })
+    .catch(error => console.error(error));
+  });
 }
   return (
     <div className="item_main">
@@ -91,6 +124,8 @@ const locationChange = (data) =>{
                     selectProps={{
                       Location,
                       onChange: locationChange,
+                      isClearable: true,
+                      value:AddressValue
                     }}
                   />
                   {/* <GooglePlacesAutocomplete
@@ -107,7 +142,7 @@ const locationChange = (data) =>{
                       console.log(data);
                       }}
                     onFail={(error) => console.error(error)} /> */}
-                  <i className="fa fa-map-marker"></i>
+                   <i onClick={() => { findLocation() }} className="fa fa-map-marker reg marker-location-icon"></i>
                 </div>
                   <p style={{color: 'red'}} > {errors.address ? errors.address.message : ""} </p>
               </div>

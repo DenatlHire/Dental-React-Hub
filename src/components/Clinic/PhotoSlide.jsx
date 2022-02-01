@@ -5,6 +5,8 @@ import ClinicProfileDisplay from "./ClinicProfileDisplay";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import FlashMessage from 'react-flash-message'
+import Message from "./Message";
 
 function NameSlide({
   activeStep,
@@ -19,12 +21,16 @@ function NameSlide({
   availabilityValue,
   skillValue,
   officeTypeValue,
-  designationsValue
+  designationsValue,
+  success,
+  error,
+  nextDisable
 }) {
   const validationSchema = yup.object().shape({});
 
   const {
     setValue,
+    getValues,
     handleSubmit,
     formState: { errors },
     register,
@@ -33,28 +39,52 @@ function NameSlide({
     mode: "onChange",
     resolver: yupResolver(validationSchema),
     defaultValues: {
-     ...user,
-    },
+      ...user
+    }
   });
 
   const df_banner_photo = "/uploads/background.jpg";
-  const [banner_file, setbanner_file] = useState(null)
-  const [banner_photo, setbanner_photo] = useState(window.baseURL + df_banner_photo)
+  const [banner_file, setbanner_file] = useState(null);
+  const [newImages, setnewImages] = useState([]);
+  const [newImagesPreview, setnewImagesPreview] = useState([]);
+  const [banner_photo, setbanner_photo] = useState(
+    window.baseURL + df_banner_photo
+  );
   var formData = new FormData();
- const handleImages = async (event) => {
-        console.log("photo",event.target.files);
-        const files = event.target.files;
-        let filesValue = []; 
-        for (let i = 0; i < files.length; i++) {
-            filesValue.push(files[i])
-            setValue('clinicPhoto',filesValue)
-        }
-              
-}
-const handleSkipForm = () =>{
+  const handleImages = async (event) => {
+    console.log("photo", event.target.files);
+    const files = event.target.files;
+    let filesValue = newImages;
+    for (let i = 0; i < files.length; i++) {
+      filesValue.push(files[i])
+      setnewImages([...filesValue])
+      setValue('clinicPhoto',filesValue)
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(files[i])
+      fileReader.onload = () => {
+        newImagesPreview.push(fileReader.result)
+        setnewImagesPreview([...newImagesPreview]);
+      }
+      // setnewImagesPreview(filesValue)
+      // setValue('clinicPhoto',filesValue)
+    }
 
-}
+  }
+
+
+  const removePreview = (iamges,i)=>{
+    let imagePreviewData = newImagesPreview;
+    imagePreviewData.splice(i, 1);
+    setnewImagesPreview([...imagePreviewData])
+    let imageData = newImages;
+    imageData.splice(i, 1);
+    setnewImages([...imageData])
+    setValue("clinicPhoto", imageData);
+  }
+
+  const handleSkipForm = () => {};
   return (
+    
     <div className="item_main">
       <div className="item_in_info">
         <div className="item_left_info">
@@ -72,26 +102,44 @@ const handleSkipForm = () =>{
             <form onSubmit={handleSubmit(handleSubmitForm)}>
               <div className="item_form_wrap">
                 <h2 className="form_title">Upload Photos of Your Clinic.</h2>
-
+                <div className="fil_slide_wrap">
                 <div class="fileUpload">
-                {/* <img className="up_img" src={banner_photo} 
-                alt={name}
-                 /> */}
-                 {console.log("banner",banner_file)
-                 }
-                        <input
-                            className="file-upload"
-                            name="bannerimage"
-                            id="bannerimage"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImages}
-                            multiple
-                        />
+                  {console.log("banner", banner_file)}
+                  <input
+                    className="file-upload"
+                    name="bannerimage"
+                    id="bannerimage"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImages}
+                    multiple
+                  />
                   <span>
                     <i className="fa fa-plus"></i>
                   </span>
                 </div>
+                <div className="ex_photos">
+                      <div className="ex_photos_wrap">
+                        {newImagesPreview && newImagesPreview.length > 0 &&
+                          newImagesPreview.map((iamges,i) => (
+                            <div className="ex_photos_in">
+                              <div className="thumbnail-container">
+                                <div className="thumbnail">
+                                  <img
+                                    src={iamges}
+                                    alt="photos"
+                                  />
+                                  <div className="removeImage" onClick={() => { removePreview(iamges, i) }} style={{position:'absolute'}}> <i className="fa fa-remove"></i> </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        }
+
+                      </div>
+                    </div>
+                    </div>
               </div>
               <Pagination
                 activeStep={activeStep}
@@ -99,19 +147,26 @@ const handleSkipForm = () =>{
                 handleReset={handleReset}
                 handleSkip={handleSkip}
                 handleBack={handleBack}
+                nextDisable={nextDisable}
               />
             </form>
             <div className="slider_range">
-           <div className="slider_in_percent" style={{width: "100%"}}></div>
-         </div>
+              <div
+                className="slider_in_percent"
+                style={{ width: "100%" }}
+              ></div>
+            </div>
           </div>
+          {/* {error ?  <Message message={"An error occured"} messageType={"error"} /> : ''} */}
+        {success ?    <Message message={"Registered Successfully"} messageType={"success"} /> : ''}
         </div>
-        <ClinicProfileDisplay data={user} 
-        	workSituatuonValue = {workSituatuonValue}
-          availabilityValue = {availabilityValue}
-          skillValue = {skillValue}
-          officeTypeValue = {officeTypeValue}
-          designationsValue = {designationsValue}
+        <ClinicProfileDisplay
+          data={user}
+          workSituatuonValue={workSituatuonValue}
+          availabilityValue={availabilityValue}
+          skillValue={skillValue}
+          officeTypeValue={officeTypeValue}
+          designationsValue={designationsValue}
         />
       </div>
     </div>

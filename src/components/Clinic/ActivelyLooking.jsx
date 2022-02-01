@@ -19,7 +19,8 @@ function ActivelyLooking({
   availabilityValue,
   skillValue,
   officeTypeValue,
-  designationsValue
+  designationsValue,
+  nextDisable
 }) {
 
 	const validationSchema = yup.object().shape({
@@ -78,12 +79,13 @@ function ActivelyLooking({
 							</div>
 							</div>
             <Pagination
-        activeStep={activeStep}
-        steps={steps}
-        handleReset={handleReset}
-        handleSkip={handleSkip}
-        handleBack={handleBack}
-      />
+              activeStep={activeStep}
+              steps={steps}
+              handleReset={handleReset}
+              handleSkip={handleSkip}
+              handleBack={handleBack}
+              nextDisable={nextDisable}
+            />
           </form>
           <div className="slider_range">
            <div className="slider_in_percent" style={{width: "45%"}}></div>

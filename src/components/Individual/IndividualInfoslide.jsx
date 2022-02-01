@@ -14,6 +14,7 @@ import OfficeTypeSilder from "./OfficeTypeSilder";
 import Position from "./Position";
 import IndividualBioSlide from "./IndividualBioSlide";
 import { useHistory } from "react-router-dom";
+import {updateExp} from '../FilterService';
 // import AutoComplete from "./AutoComplete";
 
 
@@ -35,23 +36,41 @@ export default function IndividualInfoslide() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const history = useHistory();
-
-  const isStepOptional = step => {
-    return step === 1;
-  };
   const [designations, setDesignations] = useState();
   const [skill, setSkill] = useState([]);
   const [workSituatuon, setWorkSituatuon] = useState([]);
   const [availability, setAvailability] = useState([]);
   const [officeType, setOfficeType] = useState([]);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false)
 
   useEffect(() => {
+    document.body.classList.remove('foo_shape_img');
     getDesignation();
     getSkills();
     getWorkSituation();
     getavailability();
     getTypes();
   }, []);
+
+  useEffect(() => {
+    if(user.designation_id)
+      getdesSkills()
+  }, [activeStep])
+
+  const getdesSkills = () => {
+    axios
+    .get("/skillset-types",{params: {
+      designation_id: user.designation_id
+      }}).then(response => {
+        console.log("res", response);
+        setSkill(response.data);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      });
+  };
 
   const getDesignation = () => {
     axios
@@ -67,8 +86,7 @@ export default function IndividualInfoslide() {
   };
   const getSkills = () => {
     axios
-      .get("/skillset-types")
-      .then(response => {
+    .get("/skillset-types").then(response => {
         console.log("res", response);
         setSkill(response.data);
       })
@@ -137,10 +155,18 @@ export default function IndividualInfoslide() {
   };
 
   const handleBack = () => {
+    if(activeStep === 0){
+      history.push("/signupprofile");
+    }
+    setisDisable(false)
     console.log("backuser", user);
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
+
+  const isStepOptional = (step) => {
+    return step === 5;
+  };
   const handleSkip = () => {
     // if (!isStepOptional(activeStep)) {
     //   // You probably want to guard against something like this,
@@ -165,40 +191,48 @@ export default function IndividualInfoslide() {
   const [user, setUser] = useState([]);
   const [userid, setUserid] = useState();
   const [workHistories, setWorkHistories] = useState([]);
+  const [isDisable, setisDisable] = useState(false);
 
   const handleSubmitForm = getdata => {
     // setData(prev => ({ ...prev, ...getdata }));
     console.log("data", getdata);
     setUser(getdata);
     if (activeStep === steps.length) {
+      setisDisable(true)
     setTimeout(function(){ 
       addUser(getdata);
+      // history.push("/signin");
     }, 3000);
     }
 
     if(activeStep === 4 && getdata.looking_for === "No"){
+      console.log("inin");
+      setisDisable(true)
       addUser(getdata);
-      history.push("/signin");
+      // history.push("/signin");
+    }else{
+      handleNext();
+      // setisDisable(false);
     }
-  handleNext();
   };
 
   const addUser = (getdata) => {
-console.log("user",getdata)
-
+    setisDisable(true)
     axios
       .post("/auth/local/register", {
         firstname: user.firstname,
         lastname: user.lastname,
+        username: user.firstname.toLowerCase()+"_"+user.lastname.toLowerCase(),
         email: user.email,
         phone: user.phone,
-        username: user.username,
         password: user.password,
         blocked: 0,
         confirmed: 1,
         type:1
       })
       .then(response => {
+        setSuccess(true);
+        setError(false)
         console.log("success", response);
         let user_id = response.data.user.id;
         if(activeStep === 4 && getdata.looking_for === "No"){
@@ -211,20 +245,38 @@ console.log("user",getdata)
             longitude: user.longitude.toString(),
             address: user.address,
             user_id: user_id,
+          }).then(res=>{
+            setError(false)
+            setSuccess(true)
+            axios.post('auth/local', {
+                identifier: user.email,
+                password: user.password
+            }).then(responseLogin => {
+              localStorage.setItem("user", JSON.stringify(responseLogin.data.user));
+              localStorage.setItem("token", responseLogin.data.jwt);
+              localStorage.setItem("user-info", JSON.stringify(res.data));
+              window.location.href = '/searchresult';
+            });
+            // history.push("/signin");
           })
+        }else{
+          addUserInformation(user_id,getdata);
         }
+        setError(false)
+        setSuccess(true)
         setUserid(user_id);
-        addUserInformation(user_id,getdata);
-        addWorkHist(user_id)
-        addEducation(user_id,getdata)
       })
-      .then(userEduc => {
-        history.push("/signin");
-      })
-      .catch(error => {
-        // Handle error.
-        console.log("An error occurred:", error);
-      });
+      // .then(userEduc => {
+      //   setTimeout(() => {
+      //     history.push("/signin");
+      //   }, 2000);
+      // })
+      // .catch(error => {
+      //   // Handle error.
+      //   setError(true)
+      //   setSuccess(false)
+      //   console.log("An error occurred:", error);
+      // });
   };
 
   const addUserInformation = (user_id,getdata) => {
@@ -232,8 +284,8 @@ console.log("user",getdata)
       .post("/user-informations", {
         looking_for: getdata.looking_for,
         designation_id: user.designation_id,
-        latitude: user.latitude.toString(),
-        longitude: user.longitude.toString(),
+        latitude: user.latitude?.toString(),
+        longitude: user.longitude?.toString(),
         address: user.address,
         type:"1",
         skillset_type_id: user.skillset_type_id.toString(),
@@ -247,33 +299,74 @@ console.log("user",getdata)
       .then(response => {
         console.log("success");
         let userinfoid = response.data.id;
-            for (let i = 0; i < getdata.profile_photo.length; i++) {
-              const data = new FormData();
+        if(getdata.profile_photo){
+          for (let i = 0; i < getdata.profile_photo.length; i++) {
+            const data = new FormData();
+  
+            let photo = "";
+            let file = [];
     
-              let photo = "";
-              let file = [];
-      
-              
-              photo = "profile_photo";
-              
-              file = getdata.profile_photo[i];
             
-      
-              data.append('ref', 'user-information');
-              data.append('refId',userinfoid);
-              data.append('field', photo);
-              data.append('files', file);
-              for (var key of data.entries()) {
-                console.log(key[0] + ', ' + key[1])
-              }
-              const upload_res = axios.post("/upload",data);
+            photo = "profile_photo";
+            
+            file = getdata.profile_photo[i];
+          
+    
+            data.append('ref', 'user-information');
+            data.append('refId',userinfoid);
+            data.append('field', photo);
+            data.append('files', file);
+            for (var key of data.entries()) {
+              console.log(key[0] + ', ' + key[1])
             }
-        return response;
+            const upload_res = axios.post("/upload",data)
+            ;
+          }
+        }
+        if(getdata.job_exp){
+          addWorkHist(user_id)
+        }
+        if(getdata.education){
+          addEducation(user_id,getdata)
+        }
+        axios.post('auth/local', {
+          identifier: getdata.email,
+          password: getdata.password
       })
-      .catch(error => {
-        // Handle error.
-        console.log("An error occurred:", error.response);
-      });
+          .then(responseLoginData => {
+
+              
+              localStorage.setItem("user", JSON.stringify(responseLoginData.data.user));
+              localStorage.setItem("token", responseLoginData.data.jwt);
+              
+              console.log("response ====>",responseLoginData.data);
+              axios
+                  .get("user-informations", {
+                      params: {
+                      user_id: responseLoginData.data.user.id
+                      }
+                  })
+                  .then(response => {
+                      localStorage.setItem("user-info", JSON.stringify(response?.data[0]));
+                      window.location.href = '/searchresult';
+                  })
+              
+          })
+          .catch(error => {
+              // Handle error.
+              console.log('An error occurred:', error);
+              this.setState({
+                  hasError: 'Username and Password is invalid.',
+                  forclass: "text-danger text-center error-msg"
+              });
+          });
+        return response;
+        
+      })
+      // .catch(error => {
+      //   // Handle error.
+      //   console.log("An error occurred:", error.response);
+      // });
   };
 
   const addWorkHist = user_id => {
@@ -287,6 +380,10 @@ console.log("user",getdata)
         })
         .then(response => {
           console.log("success");
+          updateExp(user_id);
+          setTimeout(() => {
+            history.push("/signin");
+          }, 2000);
           return response;
         })
         .catch(error => {
@@ -306,10 +403,12 @@ console.log("user",getdata)
           })
           .then(response => {
             console.log("success",response);
-            
+            setTimeout(() => {
+              history.push("/signin");
+            }, 2000);
             
             // const upload_res = axios.post("/upload",{data});
-            history.push("/signin");
+            // history.push("/signin");
             return response;
           })
           .catch(error => {
@@ -498,6 +597,7 @@ console.log("user",getdata)
               skillValue={skill}
               officeTypeValue={officeType}
               designationsValue={designations}
+              nextDisable={isDisable}
             />
           </div>
         </div>
@@ -566,6 +666,8 @@ console.log("user",getdata)
         <div className="main_overlay_info_data">
           <div className="main_over_poup">
             <PhotoSlide
+              success={success}
+              error={error}
               activeStep={activeStep}
               steps={steps}
               handleReset={handleReset}
@@ -578,6 +680,7 @@ console.log("user",getdata)
               workSituatuonValue={workSituatuon}
               skillValue={skill}
               designationsValue={designations}
+              nextDisable={isDisable}
             />
           </div>
         </div>

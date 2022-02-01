@@ -13,6 +13,7 @@ import ClinicBioSlide from "./ClinicBioSlide";
 import PhotoSlide from "./PhotoSlide";
 import ActivelyLooking from "./ActivelyLooking";
 import ContactInfoSlider from "./ContactInfoSlider";
+import FlashMessage from 'react-flash-message'
 
 const steps = [
   "Select campaign settings",
@@ -32,6 +33,10 @@ export default function ClinicInfoslide() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const history = useHistory();
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false)
+  const [emailError,setEmailError] = useState("")
+  const [isDisable, setisDisable] = useState(false);
 
   const isStepOptional = step => {
     return step === 1;
@@ -55,6 +60,9 @@ export default function ClinicInfoslide() {
   };
 
   const handleBack = () => {
+    if(activeStep === 0){
+      history.push("/signupprofile");
+    }
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
@@ -86,29 +94,35 @@ export default function ClinicInfoslide() {
     console.log("user", getdata);
 
     if (activeStep === steps.length) {
+      setisDisable(true)
       addUser(getdata);
-      history.push("/signin");
+      // history.push("/signin");
     }
-    if(activeStep === 4 && getdata.looking_for === "No"){
-      addUser(getdata);
-      history.push("/signin");
+    else if(activeStep === 4 && getdata.looking_for === "No"){
+      setisDisable(true)
+      addUser(getdata)
+        // history.push("/signin");
+    }else{
+      handleNext();
+      setisDisable(false);
     }
-    handleNext();
   };
 
   const addUser = (getdata) => {
+    setisDisable(true)
     axios
       .post("/auth/local/register", {
         clinicname: user.clinicname,
         email: user.email,
         phone: user.phone,
-        username: user.username,
+        username: user.clinicname.replace(/ /g,"_").toLowerCase(),
         password: user.password,
         blocked: 0,
         confirmed: 1,
         type:2
       })
       .then(response => {
+        // alert(success)
         console.log("success", response);
         let user_id = response.data.user.id;
         if(activeStep === 4 && getdata.looking_for === "No"){
@@ -121,15 +135,37 @@ export default function ClinicInfoslide() {
             longitude: user.longitude.toString(),
             address: user.address,
             user_id: user_id,
+          }).then(res=>{
+            setSuccess(true);
+            setError(false)
+            axios.post('auth/local', {
+                identifier: user.email,
+                password: user.password
+            }).then(responseLogin => {
+              localStorage.setItem("user", JSON.stringify(responseLogin.data.user));
+              localStorage.setItem("token", responseLogin.data.jwt);
+              localStorage.setItem("user-info", JSON.stringify(res.data));
+              window.location.href = '/findProfile';
+            });
+            // setTimeout(() => {
+            //   history.push("/signin");
+            // }, 2000);
           })
-
+        }else{
+          addUserInformation(user_id,getdata);
         }
         setUserid(user_id);
-        addUserInformation(user_id,getdata);
+        setSuccess(true);
+        setError(false)
+        // setTimeout(() => {
+        //   history.push("/signin");
+        // }, 2000);
       })
       .catch(error => {
         // Handle error.
-        console.log("An error occurred:", error);
+        setError(true)
+        setSuccess(false)
+        // history.push("/signin");
       });
   };
 
@@ -154,35 +190,45 @@ export default function ClinicInfoslide() {
       .then(response => {
         console.log("success",response);
         let userinfoid = response.data.id;
-        for (let i = 0; i < getdata.clinicPhoto.length; i++) {
-          const data = new FormData();
+        if(getdata.clinicPhoto && getdata.clinicPhoto.length > 0){
+          for (let i = 0; i < getdata.clinicPhoto.length; i++) {
+            const data = new FormData();
 
-          let photo = "";
-          let file = [];
-  
+            let photo = "";
+            let file = [];
+    
+            
+            photo = "clinic_photos";
+            
+            file = getdata.clinicPhoto[i];
           
-          photo = "clinic_photos";
-          
-          file = getdata.clinicPhoto[i];
-        
-  
-          data.append('ref', 'user-information');
-          data.append('refId',userinfoid);
-          data.append('field', photo);
-          data.append('files', file);
-          for (var key of data.entries()) {
-            console.log(key[0] + ', ' + key[1])
+    
+            data.append('ref', 'user-information');
+            data.append('refId',userinfoid);
+            data.append('field', photo);
+            data.append('files', file);
+            for (var key of data.entries()) {
+              console.log(key[0] + ', ' + key[1])
+            }
+            const upload_res = axios.post("/upload",data);
           }
-          const upload_res = axios.post("/upload",data);
         }
         
         // const upload_res = axios.post("/upload",{data});
-        history.push("/signin");
+        axios.post('auth/local', {
+          identifier: user.email,
+          password: user.password
+      }).then(responseLogin => {
+        localStorage.setItem("user", JSON.stringify(responseLogin.data.user));
+        localStorage.setItem("token", responseLogin.data.jwt);
+        localStorage.setItem("user-info", JSON.stringify(response.data));
+        window.location.href = '/findProfile';
+      });
         return response;
       })
       .catch(error => {
         // Handle error.
-        console.log("An error occurred:", error.response);
+        console.log("An error occurred:", error);
       });
   };
 
@@ -193,6 +239,7 @@ export default function ClinicInfoslide() {
   const [officeType, setOfficeType] = useState([]);
 
   useEffect(() => {
+    document.body.classList.remove('foo_shape_img');
     getDesignation();
     getSkills();
     getWorkSituation();
@@ -212,6 +259,26 @@ export default function ClinicInfoslide() {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    if(user.designation_id)
+      getdesSkills()
+  }, [activeStep])
+
+  const getdesSkills = () => {
+    axios
+    .get("/skillset-types",{params: {
+      designation_id: user.designation_id
+      }}).then(response => {
+        console.log("res", response);
+        setSkill(response.data);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
   const getSkills = () => {
     axios
       .get("/skillset-types")
@@ -290,6 +357,7 @@ export default function ClinicInfoslide() {
         <div className="main_overlay_info_data">
           <div className="main_over_poup">
             <ContactInfoSlider
+              emailError={emailError}
               activeStep={activeStep}
               steps={steps}
               handleReset={handleReset}
@@ -383,6 +451,7 @@ export default function ClinicInfoslide() {
               workSituatuonValue={workSituatuon}
               skillValue={skill}
               designationsValue={designations}
+              nextDisable={isDisable}
             />
           </div>
         </div>
@@ -392,6 +461,7 @@ export default function ClinicInfoslide() {
         <div className="main_overlay_info_data">
           <div className="main_over_poup">
             <SkillSlide
+
               activeStep={activeStep}
               steps={steps}
               handleReset={handleReset}
@@ -493,6 +563,8 @@ export default function ClinicInfoslide() {
         <div className="main_overlay_info_data">
           <div className="main_over_poup">
             <PhotoSlide
+              success={success}
+              error={error}
               activeStep={activeStep}
               steps={steps}
               handleReset={handleReset}
@@ -505,6 +577,7 @@ export default function ClinicInfoslide() {
               workSituatuonValue={workSituatuon}
               skillValue={skill}
               designationsValue={designations}
+              nextDisable={isDisable}
             />
           </div>
         </div>

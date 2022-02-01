@@ -77,35 +77,39 @@ class Forgotpassword extends Component {
     }
     render() {
         return (
-            <section className="pt-4 py-md-10">
+            <section className="main_login">
                 <div className="container">
-                    <div className="row align-items-center shadow">
+                    <div className="row">
                         <div className="col-md-12 common-form">
-                            <div className="card card-row ">
-                                <div className="row gx-0">
-                                    <div className="col-12 col-md-6 d-none d-md-block bg-cover card-img-start" style={{ backgroundImage: 'url(./assets/img/photos/photo-8.jpg)' }}>
-                                        <img src="/assets/img/photos/photo-8.jpg" alt="..." className="img-fluid d-md-none invisible" />
-                                        <div className="shape shape-end shape-fluid-y svg-shim text-white d-none d-md-block">
-                                            <svg viewBox="0 0 112 690" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M116 0H51v172C76 384 0 517 0 517v173h116V0z" fill="currentColor" />
-                                            </svg>
+                            <div className="in_card">
+                                <div className="row">
+                                <div className="col-12 col-md-5 d-none d-md-block bg-cover card-img-start in_card-left">
+                                        
+                                        <div className="form_left">
+                                           <div className="banner_desc_main">
+                                                <h2 className="banner_title">Connecting <span>Dental <br/>Professionals and Clinics</span></h2>
+                                                <div className="banner_desc_small">
+                                                    <p> Browse local dental jobs and opportunities. 
+                                                    <span>Create your profile and save your matches.</span></p>
+                                                </div>
+                                             
+                                           </div>
                                         </div>
+                                      
                                     </div>
-                                    <div className="col-12 col-md-6">
+                                    <div className="col-12 col-md-7">
                                         <div className="card-body">
 
-                                            <h2 className="mb-0 fw-bold text-center main_title" id="">
+                                            <h2 className="mb-0 fw-bold main_title" id="">
                                                 Forgot Password
                                             </h2>
-                                            <div className="mb-6 mt-2 text-center text-muted">
-                                                Please enter your email address.
-                                            </div>
+                                          
                                             {this.state.hasError && (
                                                 <p className={this.state.forclass}>{this.state.hasError}</p>
                                             )}
                                             <form className="mb-4" onSubmit={(event) => this.preventSubmit(event)}>
                                                 <div className="form-group mb-5">
-
+                                                  <label>Email Address</label>
                                                     <input type="email" className="form-control" name="email" id="email"
                                                         value={this.state.email}
                                                         onChange={(event) => this.handleUserInput(event)}
@@ -113,14 +117,18 @@ class Forgotpassword extends Component {
                                                     <p className="text-danger">{this.state.emailError}</p>
                                                 </div>
 
-                                                <button className="btn w-100 btn-primary" type="submit" onClick={() => this.submit()}>
+                                                
+                                            <p className="mb-0 bottom_link fs-sm text-center text-muted">
+                                                Don't have an account yet? <Link to="/signup">Sign up</Link>
+                                            </p>
+
+                                             <div className="clearfix"></div>
+
+                                                <button className="theme_btn_default" type="submit" onClick={() => this.submit()}>
                                                     Forgot Password
                                                 </button>
                                             </form>
 
-                                            <p className="mb-0 fs-sm text-center text-muted">
-                                                Don't have an account yet? <Link to="/signup">Sign up</Link>
-                                            </p>
 
                                         </div>
                                     </div>

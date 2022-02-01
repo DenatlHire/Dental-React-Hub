@@ -54,22 +54,48 @@ function NameSlide({
 
   const handleSelectOfficeType = (e) =>{
     let selectedValue = selectedOfficeType;
-    console.log('event.target.checked;',e.target.checked)
-    console.log('event.target.value',e.target.value)
-    if(e.target.checked){
-      selectedValue.push(e.target.value)
-      console.log('selectSkill',selectedValue)
-      setSelectedOfficeType([...selectedValue])
-      setValue('officetype',selectedValue)
-    }
+
+    const selectedArray = officeTypes.find(element => element.id == e.target.name );
+    console.log("selectedArray",selectedArray.option_1);
+    if(selectedValue.find(element => element == selectedArray.option_1 )){
+        // remove option 1 value and add option_2 value
+        const index = selectedValue.indexOf(selectedArray.option_1); 
+        if (index > -1) {
+          selectedValue.splice(index, 1);
+          selectedValue.push(e.target.value)
+          setSelectedOfficeType([...selectedValue])
+          setValue('officetype',selectedValue)
+        }
+
+      }else if(selectedValue.find(element => element == selectedArray.option_2 )){
+          // remove option_2 value and add option_1 value
+          const index = selectedValue.indexOf(selectedArray.option_2); 
+          if (index > -1) {
+            selectedValue.splice(index, 1);
+            selectedValue.push(e.target.value)
+            setSelectedOfficeType([...selectedValue])
+            setValue('officetype',selectedValue)
+          }
+
+      }else{
+        selectedValue.push(e.target.value)
+        setSelectedOfficeType([...selectedValue])
+        setValue('officetype',selectedValue)
+      }
+
+    // if(e.target.checked){
+    //   selectedValue.push(e.target.value)
+    //   console.log('selectSkill',selectedValue)
+    //   setSelectedOfficeType([...selectedValue])
+    //   setValue('officetype',selectedValue)
+    // }
     // else{
     //   const index = selectedValue.indexOf(e.target.value);
     //   if (index > -1) {
     //     selectedValue.splice(index, 1);
-    //     console.log('selectSkill',selectedValue)
-    //     setSelectSkill([...selectedValue])
-    //     setValue('skillset_type_id',selectedValue)
-
+    //     console.log('selectSkillselectSkill',selectedValue)
+    //     setSelectedOfficeType([...selectedValue])
+    //     setValue('officetype',selectedValue)
     //   }
     // }
   }
@@ -98,11 +124,10 @@ function NameSlide({
             {officeTypes.map((type,i) => (
                <div class="InputGroup">
                <input type="radio" 
-               name={i+'size'}
+               name={type.id}
                id={type.option_1}
                value={type.option_1} 
-               checked={selectedOfficeType.find(element => element == type.option_1) }
-               
+               defaultChecked={selectedOfficeType.find(element => element == type.option_1) }
               //  {...register(`officetype[${i}]`)} 
               onChange={(e)=>{handleSelectOfficeType(e)}}
                />
@@ -110,10 +135,10 @@ function NameSlide({
 
                <input
                  type="radio"
-                 name={i+'size'}
+                 name={type.id}
                  id={type.option_2}
                  value={type.option_2}
-                 checked={selectedOfficeType.find(element => element == type.option_2) }
+                 defaultChecked={selectedOfficeType.find(element => element == type.option_2) }
                 //  {...register(`officetype[${i}]`)}
               onChange={(e)=>{handleSelectOfficeType(e)}}
                />

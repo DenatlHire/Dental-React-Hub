@@ -7,9 +7,12 @@ import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng
 } from "react-google-places-autocomplete";
-import {getClinicFilter,individualVisitPage,individualSaveJob} from '../FilterService'
+import {getProfileFilter,clinicVisitPage,clinicSaveProfile} from '../FilterService'
 import {getSkills} from '../Service';
-export default function SearchResult() {
+import profile_pic from "./../../images/avatar.jpeg";
+import InfiniteScroll from 'react-infinite-scroll-component';
+
+export default function FindProfile() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [designations, setDesignations] = useState([]);
   const [skill, setSkill] = useState([{title: "Please select designation" , id: 0}]);
@@ -21,13 +24,21 @@ export default function SearchResult() {
   const [filterText, setFilerText] = useState('');
   const [userExperience, setExperience] = useState(0);
   const [searchResult, setSearchResult] = useState([]);
+  const [searchResultListing, setSearchResultListing] = useState([]);
   const [searchLat, setSearchLat] = useState('');
   const [searchLng, setSearchLng] = useState('');
   const [loading, setloading] = useState(true);
-  const [address, setAddress] = useState('address');
+  const [addressValue, setAddress] = useState();
+  const df_profile_photo = profile_pic;
   const divRef = useRef(null)
+  const [count, setCount] = useState({
+    prev: 0,
+    next: 5
+  })
+  const [hasMore, setHasMore] = useState(true);
   const locationChange = (data) =>{
     console.log(data);
+    setAddress(data)
     if(data){
       geocodeByAddress(data.label)
       .then(results => getLatLng(results[0]))
@@ -99,7 +110,16 @@ export default function SearchResult() {
         console.log(error);
       });
   };
-
+  const getMoreData = () => {
+    if (searchResultListing.length === searchResult.length) {
+      setHasMore(false);
+      return;
+    }
+    setTimeout(() => {
+      setSearchResultListing(searchResultListing.concat(searchResult.slice(count.prev + 5, count.next + 5)))
+    }, 2000)
+    setCount((prevState) => ({ prev: prevState.prev + 5, next: prevState.next + 5 }))
+  }
   const handleChange = (e) => {
     console.log("e",e);
     getdesSkills(e.id)
@@ -111,26 +131,28 @@ export default function SearchResult() {
     // console.log('res==>',Result)
     setSelectedSkill(e)
   }
-
   const filterQuery = (e) =>{
     e.preventDefault();
     setloading(true)
     let selectedSkillData = selectedSkill ? selectedSkill.map(choice => (choice.id)) : [];
     let selectedAvilabilityData = selectedAvailability ? selectedAvailability.map(choice => (choice.id)): [];
-    getClinicFilter(selectedAvilabilityData.join(','),selectedDesignations.id,selectedSkillData.join(','),filterText,userExperience,searchLat,searchLng).then(res=>{
+    getProfileFilter(selectedAvilabilityData.join(','),selectedDesignations.id,selectedSkillData.join(','),filterText,userExperience,searchLat,searchLng).then(res=>{
       console.log('res==>',res)
-      divRef.current.scrollIntoView({behavior: 'smooth'});
+      if('data' in res){
+        divRef.current.scrollIntoView({behavior: 'smooth'});
+        setSearchResult(res.data)
+        setSearchResultListing(res.data.slice(count.prev, count.next))
+      }else{
+        setSearchResult([])
+        setSearchResultListing([])
+      }
       setTimeout(() => {
         setloading(false)
       }, 1000);
-      if('data' in res){
-        setSearchResult(res.data)
-      }else{
-        setSearchResult([])
-      }
     })
   }
   const filterQueryclear = () =>{
+    setAddress('')
     setloading(true)
     setSelectedAvailability('');
     setSelectedDesignations('');
@@ -139,15 +161,17 @@ export default function SearchResult() {
     setExperience('');
     setSearchLat('');
     setSearchLng('');
-    getClinicFilter('','','','','','','').then(res=>{
+    getProfileFilter('','','','','','','').then(res=>{
       console.log('res==>',res)
       setTimeout(() => {
         setloading(false)
       }, 1000);
       if('data' in res){
         setSearchResult(res.data)
+        setSearchResultListing(res.data.slice(count.prev, count.next))
       }else{
         setSearchResult([])
+        setSearchResultListing([])
       }
     })
   }
@@ -157,10 +181,10 @@ export default function SearchResult() {
       //do false
       let insertData = {
         user_id : user.id,
-        job_id:dataValue.id
+        profile_id:dataValue.id
       }
       axios
-      .delete("/saved-jobs/"+dataValue.savedID)
+      .delete("/saved-profiles/"+dataValue.savedID)
       .then(response => {
         console.log('response',response)
         if (response.status === 200) {
@@ -179,16 +203,16 @@ export default function SearchResult() {
       //do true
       let insertData = {
         user_id : user.id,
-        job_id:dataValue.id
+        profile_id:dataValue.id
       }
       axios
-      .post("/saved-jobs",insertData )
+      .post("/saved-profiles",insertData )
       .then(response => {
         if (response.status === 200) {
           dataValue.saved = true;
           dataValue.savedID = response.data.id;
           setSearchResult([...searchResult,dataValue]) 
-          individualSaveJob(dataValue.id)
+          clinicSaveProfile(dataValue.id)
 
         } else{
           console.log('err',response.data.error)
@@ -203,7 +227,7 @@ export default function SearchResult() {
     console.log('dataValue',dataValue)
   }
   const clinicProfileVisite = (user_id) =>{
-    individualVisitPage(user_id);
+    clinicVisitPage(user_id);
   }
   return (
     <div>
@@ -211,18 +235,18 @@ export default function SearchResult() {
 
             <div className="container t_search">
             <div class="baner-search-box banner-search-job p-6">
-              <form  onSubmit={(e)=>{filterQuery(e)}}>
+            <form  onSubmit={(e)=>{filterQuery(e)}}>
               <div class="row align-items-center">
 
                 <div className='col-sm-12'>
-                  <h2 className="serch_title">Search Jobs</h2>
+                  <h2 className="serch_title">Search Candidates</h2>
                 </div>
 
                 <div class="col-sm-4 col-lg-4">
-                <label>Job Title</label>
+                <label>Name</label>
                   <div class="input-group input-group-lg"><span class="input-group-text border-0 pe-1"><i class="fe fe-search"></i></span>
                  
-                  <input type="text" onChange={(e)=>{setFilerText(e.target.value)}} value={filterText} class="form-control border-0 px-1" placeholder="Job Title"/>
+                  <input type="text" onChange={(e)=>{setFilerText(e.target.value)}} value={filterText} class="form-control border-0 px-1" placeholder="Name"/>
                   </div>
                 </div>
                 
@@ -259,16 +283,16 @@ export default function SearchResult() {
                 <label>Location</label>
                   <div class="input-group input-group-lg">
                   <span class="input-group-text border-0 pe-1"><i class="fe fe-map-pin"></i></span>
-                  <div className="se_location">
+                  <div className="se_location autocomplete">
                  <GooglePlacesAutocomplete
+                 className={''}
                   apiKey={"AIzaSyC_jsl4AwbLyzmnmKAh5puxKPqVlh9eN7I"}
-                  value={'address'}
                     selectProps={{
                       Location,
                       onChange: locationChange,
-                      isClearable:true
+                      isClearable:true,
+                      value:addressValue
                     }}
-                    // error={!!errors.address}
                   />
                   {/* <i className="fa fa-map-marker marker-location-icon"></i> */}
                 </div>
@@ -302,7 +326,7 @@ export default function SearchResult() {
                   />
                   </div>
                 </div>
-                <div class="col-sm-12 col-lg-6 f-btn"><button type="submit" class="btn btn-sm btn-primary">Search</button></div>
+                <div class="col-sm-12 col-lg-6 f-btn"><button type="submit"  class="btn btn-sm btn-primary">Search</button></div>
                 <div class="col-sm-12 col-lg-6 f-btn"><button type="button" onClick={()=>{filterQueryclear()}} class="btn btn-sm btn-primary">Clear</button></div>
               </div>
               </form>
@@ -314,95 +338,107 @@ export default function SearchResult() {
          
 
             <div className="search_main_ttl" ref={divRef}>
-              <h2>We think these clinics may be a good match for you.</h2>
+              <h2>We think these candidates may be a good match for your company.</h2>
             </div>
             {loading ? <div className="spinnerParent"><div id="loadingSearch"></div></div> :
-              <>
-              {searchResult.length > 0 ?
-              searchResult.map((data,i)=>{
-                
-              return (
-              <div className="in_result_box success_saved">
-                  <div className="in_search_top">
-                    <h2 className="main_s_title">{data.clinicname}</h2>
-                    <span className="s_designation">{data.address}</span>
-                    <div onClick={()=>savedSearch(i)} class={`saved_icon ${data.saved ? 'active' : ''}`}></div>
-                  </div>
-                  <div className="result_bottom_sec">
-                    <div className="user_left_sec">
-                      <div className="use_image">
-                        <div className="thumbnail-container">
-                          <div className="thumbnail">
-                            <img src={data.url ? window.baseURL + data.url : "/assets/img/dental_img.png"} alt="Dental" />
-                          </div>
-                        </div>
+            <>
+            <InfiniteScroll
+          dataLength={searchResultListing.length}
+          next={getMoreData}
+          hasMore={hasMore}
+          loader={<div className="spinnerParent" style={{marginTop:"10px"}}><div id="loadingSearch"></div></div>}
+          
+        >
+            {searchResultListing.length > 0 ?
+            searchResultListing.map((data,i)=>{
+              
+             return (
+              <div className="in_result_box">
+              <div className="in_search_top">
+                <h2 className="main_s_title">{data.firstname} {data.lastname}</h2>
+                <span className="s_designation">{data.address}</span>
+               
+                <div onClick={()=>savedSearch(i)} class={`saved_icon ${data.saved ? 'active' : ''}`}></div>
+       
+              
+              </div>
+              <div className="result_bottom_sec">
+                <div className="user_left_sec">
+                  <div className="use_image">
+                    <div className="thumbnail-container">
+                      <div className="thumbnail">
+                        <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" />
                       </div>
-
-                      <div className="user_info_in">
-                        <div className="hiring_btn">
-                          <a href="#" title="Currently Hiring"><i class="fa fa-check" aria-hidden="true"></i> This Company Matches your Profile</a>
-                        </div>
-                        <div className="us_btn">
-                          <ul>
-                            <li><Link onClick={()=>clinicProfileVisite(data.user_id)} target={'_blank'} to={`/clinicProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
-                            <li><a className='msg-btn' href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a></li>
-                          </ul>
-                        </div>
-                      </div>
-
                     </div>
-                    <div className="user_right_sec">
+                  </div>
 
-                      <div className="us_desc">
-                        <p>{data.description}</p>
-                      </div>
-                      <div class="title_wrap">
-                          <h2 class="us_name">Doctor of   {designations && designations?.map((value) => {
+                  <div className="user_info_in">
+                    <div className="hiring_btn">
+                      <a href="#" title="Looking for Work"> <i class="fa fa-briefcase" aria-hidden="true"></i> Looking for Work</a>
+                    </div>
+                    <div className="us_btn">
+                      <ul>
+                        <li><Link onClick={()=>{clinicProfileVisite(data.user_id)}} target={'_blank'} to={`/individualProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
+                        <li><a className='msg-btn' href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a></li>
+                      </ul>
+                    </div>
+                  </div>
+
+                </div>
+                <div className="user_right_sec">
+
+                  <div className="title_wrap">
+                    <h2 className="us_name">Doctor of {designations && designations?.map((value) => {
                             return (
-                              <>{value.id === parseInt(data.roles) ? value.name : ""}</>
+                              <>{value.id === parseInt(data.designation_id) ? value.name : ""}</>
                             )
-                          })}<span>Currently Hiring</span></h2>
-                          <h2 class="us_name">{data.experience} Years<span>Working Experience Required</span></h2>
-                        </div>
+                          })}<span>Looking for Work</span></h2>
+                    <h2 className="us_name">{data.clinical_experience} Years<span>Working Experience Required</span></h2>
+                  </div>
 
-                      <div className="user_his_box">
-                        <h2 className="use_his_title">
-                          Skills
-                        </h2>
-                        <ul className="user_his_list">
-                          {data.skills.split(/\s*,\s*/).map(skillData=>{
+                  <div className="user_his_box">
+                    <h2 className="use_his_title">
+                      Skills
+                    </h2>
+                    <ul className="user_his_list">
+                    {data?.skillset_type_id?.split(/\s*,\s*/)?.map(skillData=>{
                             return(allSkill.map(dataSkillAll=>(
                               dataSkillAll.id == skillData && <li>{dataSkillAll.title}</li>
                             )))
                           })}
-                        </ul>
-                      </div>
+                    </ul>
+                  </div>
 
-                      <div className="user_his_box">
-                        <h2 className="use_his_title">
-                          Clinic Hours
-                        </h2>
-                        <ul className="user_his_list">
-                        {data.availability.split(/\s*,\s*/).map(availabilityData=>{
+                  <div className="user_his_box">
+                    <h2 className="use_his_title">
+                     Availability
+                    </h2>
+                    <ul className="user_his_list">
+                    {data?.hours_time?.split(/\s*,\s*/)?.map(availabilityData=>{
                             return(availability.map(dataAvailability=>(
                               dataAvailability.id == availabilityData && <li>{dataAvailability.title}</li>
                             )))
                           })}
-                        </ul>
-                      </div>
-
-
-                    </div>
+                    </ul>
                   </div>
-                </div>)
-              })
-                
-              :
-                <div className="in_result_box"><p className="no_data">No Data Found</p></div>
-              }
-              </>
+
+                  {/* <div className="us_desc mt-5">
+                    <p>asasasasa sdsdsd</p>
+                  </div> */}
+                </div>
+              </div>
+            </div>
+            
+              )
+            })
+              
+            :
+              <div className="in_result_box"><p className="no_data">No Data Found</p></div>
             }
+            </InfiniteScroll>
+            </>}
           </div>
+          
         </div>
     </div>
   )

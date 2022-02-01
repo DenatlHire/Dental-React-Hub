@@ -23,6 +23,7 @@ export const Pagination = ({
   handleSkip,
   handleSubmitForm,
   handleBack,
+  nextDisable
 }) => {
   const isStepOptional = (step) => {
     return step === 1;
@@ -69,7 +70,7 @@ export const Pagination = ({
       <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
         <Button
           color="inherit"
-          disabled={activeStep === 0}
+          // disabled={activeStep === 0}
           onClick={handleBack}
           sx={{ mr: 1 }}
         >
@@ -83,11 +84,25 @@ export const Pagination = ({
           </Button>
         )}
 
+        { activeStep === 5  && (
+          <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+            Skip this Step
+          </Button>
+        )}
+
+        { activeStep === 6 && (
+          <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+            Skip this Step
+          </Button>
+        )}
+
         {activeStep === steps.length &&
-          <Button className="skipbtn" type="submit">
+          <Button className="skipbtn MuiButton-colorInherit" type="submit">
             {"Skip this Step"}
           </Button>}
-        <Button className="next-button" type="submit">
+          {console.log("nextDisable",nextDisable)
+          }
+        <Button className="next-button" type="submit" disabled={nextDisable}>
           {activeStep === steps.length ? "Finish" : "Continue"}
         </Button>
       </Box>

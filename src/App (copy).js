@@ -27,6 +27,7 @@ import ChangeProfile from './components/ChangeProfile/ChangeProfile';
 
 import Header from './components/includes/Header';
 import Footer from './components/includes/Footer';
+import MyJobs from "./components/MyJobs/MyJobs";
 
 // function Welcome(props) {
 //     const {slug}  = useParams();
@@ -56,6 +57,10 @@ function App() {
 
                     <Route path="/jobs">
                         <Jobs/>
+                    </Route>
+
+                    <Route path="/myjobs">
+                        <MyJobs/>
                     </Route>
 
                     <Route path="/news">

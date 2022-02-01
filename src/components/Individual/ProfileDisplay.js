@@ -13,7 +13,7 @@ function ProfileDisplay({
   let des = designationsValue;
   return (
     <div className="item_right_info">
-      {console.log("data submit", user, designationsValue)}
+      {console.log("data submit", user, workSituatuonValue, availabilityValue)}
       <h2 className="profile_title">Your Profile</h2>
       <div className="display_item_list_wrap">
         <div className="di_item">
@@ -31,7 +31,7 @@ function ProfileDisplay({
           <div
             className={`label_data ${!user?.email && "label_data_placeholder"}`}
           >
-            {user?.email && `Email: ${user?.email}`} <br/>{user?.phone && `  Phone: ${user?.phone}`}<br/> {user?.username && `Username: ${user?.username}`}
+            {user?.email && `Email: ${user?.email}`} <br/>{user?.phone && `  Phone: ${user?.phone}`}
           </div>
         </div>
 
@@ -103,7 +103,7 @@ function ProfileDisplay({
                   "label_data_placeholder"}`}
               >
                 {work?.job_title}<br/>{work?.place_work} <br/> {work?.start_date}<br/>{" "}
-                {work?.end_date}
+                {work?.end_date}  
               </div>
             ))}
             </div>
@@ -120,7 +120,7 @@ function ProfileDisplay({
               user?.skillset_type_id.map((element , i) =>{
                 return(
                   element,
-                  skillValue.map((val) => (
+                  skillValue?.map((val) => (
                     val.id == user?.skillset_type_id[i] ?
                     ( <div> {val.title} </div>)
                        : ""
@@ -145,7 +145,7 @@ function ProfileDisplay({
               user?.hours_time.map((element , i) =>{
                 return(
                   element,
-                  workSituatuonValue.map((val) => (
+                  availabilityValue.map((val) => (
                     val.id == user?.hours_time[i] ?
                     ( <div> {val.title} </div>)
                        : ""
@@ -162,7 +162,7 @@ function ProfileDisplay({
               user?.contract_type_id.map((element , i) =>{
                 return(
                   element,
-                  availabilityValue.map((val) => (
+                  workSituatuonValue.map((val) => (
                     val.id == user?.contract_type_id[i] ?
                     ( <div> {val.title} </div>)
                        : ""

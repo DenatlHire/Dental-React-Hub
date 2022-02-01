@@ -35,7 +35,10 @@ function EducationSilder({
       yup.object().shape({
         degree: yup.string().required("Degree required"),
         institute: yup.string().required("institute required"),
-        year_graduation: yup.string().required("Please select a date")
+        year_graduation: yup.string("Please select a date").required("Please select a date").default(format(
+          new Date(),
+          "yyyy-MM-dd"
+        ))
       })
     )
   });
@@ -64,7 +67,10 @@ function EducationSilder({
     [{
       degree: "",
       institute: "",
-      year_graduation: ""
+      year_graduation: format(
+        new Date(),
+        "yyyy-MM-dd"
+      )
     }]
   );
 
@@ -129,7 +135,10 @@ function EducationSilder({
     eduFields.push( {
       degree: "",
       institute: "",
-      year_graduation: ""
+      year_graduation: format(
+        new Date(),
+        "yyyy-MM-dd"
+      )
     })
     seteduFields([...eduFields]);
     console.log("edu",eduFields);
@@ -169,6 +178,10 @@ function EducationSilder({
                   {eduFields !== null
                     ? eduFields.length > 0 &&
                       eduFields.map((element, i) => (
+                        <>
+                        {i > 0 && (
+                          <div className="divider-line"></div>
+                        )}
                         <div key={i}>
                           <div className="f_group">
                             <input
@@ -192,62 +205,33 @@ function EducationSilder({
                           </div>
 
                           <div className="f_group p_relative">
-                            {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-                              <Controller
-                                control={control}
-                                // name="year_graduation"
-                                placeholder="Year of graduation"
-                                render={({ field: { value, onChange } }) => (
-                                  <DatePicker
-                                    label="Year of graduation"
-                                    inputFormat="MM/dd/yyyy"
-                                    value={
-                                      user?.education && user?.education[i]?.year_graduation ?
-                                      user?.education && user?.education[i]?.year_graduation : 
-                                      endvalue
-                                    }
-                                    name={`education[${i}].year_graduation`}
-                                    onChange={value => {
-                                      setValue(
-                                        `education[${i}].year_graduation`,
-                                        moment(value).format("MM-DD-YYYY")
-                                      );
-                                      setEndValue(value);
-                                    }}
-                                    renderInput={params => (
-                                      <TextField
-                                        {...params}
-                                        className="mr-10 mt-5"
-                                      />
-                                    )}
-                                  />
-                                )}
-                              ></Controller>
-                            </LocalizationProvider>  */}
+                          <label>Year of Graduation</label>
                              <input
+                             label="Year of graduation"
                                 className="f_control"
-                                type="month"
-                                placeholder="mm/yyyy"
-                                name={`education[${i}].year_graduation`}
-                                // {...register(`job_exp[${i}].year_graduation`)}
+                                type="date"
+                                //placeholder="Year of graduation"
+                                // name={`education[${i}].year_graduation`}
+                                {...register(`education[${i}].year_graduation`)}
                                 onChange={(e) => {
+                                  console.log('e',e.target.value)
                                   setValue(
                                       `education[${i}].year_graduation`,
-                                      moment(e.target.value).format("MM-DD-YYYY")
+                                      e.target.value
                                     );
                                 }}
-                                
-                                // defaultValue ={'2020-11'}
+                                // defaultValue ={format(new Date(),"yyyy-MM-dd")}
                                 defaultValue ={
                                   user?.education && user?.education[i]?.year_graduation ?
-                                  format(new Date(user?.education && user?.education[i]?.year_graduation), "yyyy-MM") : 
-                                  ''
+                                  format(new Date(user?.education[i]?.year_graduation),"yyyy-MM-dd"): 
+                                  format(new Date(),"yyyy-MM-dd")
                                 }
                               />
                             { errors && errors.education && <p style={{color: 'red'}} > {errors?.education[i]?.year_graduation ? errors?.education[i]?.year_graduation.message : ""} </p>}                        
                           </div>
                           {i > 0 &&<p onClick={() => deleteField(i)} className="addedu"> - Remove Field</p>}
                         </div>
+                        </>
                       ))
                     : []}
                 </div>

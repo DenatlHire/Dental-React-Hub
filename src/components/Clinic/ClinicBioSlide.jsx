@@ -56,7 +56,7 @@ function NameSlide({
             <form onSubmit={handleSubmit(handleSubmitForm)}>
               <div className="item_form_wrap">
                 <h2 className="form_title">Tell Us About Your Clinic.</h2>
-                <label>(ie. Clinic culture, employee perks and benefits, clinic houes, etc.)</label>
+                <label>(ie. Clinic culture, employee perks and benefits, clinic hours, etc.)</label>
                 <div className="f_group">
                   <textarea
                     className="f_control"

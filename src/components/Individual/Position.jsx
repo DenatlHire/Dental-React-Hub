@@ -19,7 +19,8 @@ function Position({
   availabilityValue,
   skillValue,
   officeTypeValue,
-  designationsValue
+  designationsValue,
+  nextDisable
 }) {
   const validationSchema = yup.object().shape({
     looking_for: yup.string().required("Please Select an Option")
@@ -41,6 +42,8 @@ function Position({
 
   return (
     <div className="item_main">
+    {console.log("nextDisablenextDisable",nextDisable)
+    }
       <div className="item_in_info">
         <div className="item_left_info">
           <div className="item_logo">
@@ -94,6 +97,7 @@ function Position({
                 handleReset={handleReset}
                 handleSkip={handleSkip}
                 handleBack={handleBack}
+                nextDisable={nextDisable}
               />
             </form>
             <div className="slider_range">

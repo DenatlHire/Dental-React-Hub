@@ -33,8 +33,8 @@ function WorkHistorySilder({
       yup.object().shape({
         job_title: yup.string().required("Job title is required"),
         place_work: yup.string().required("Work place required"),
-        start_date: yup.string().required("Please select a date"),
-        end_date: yup.string().required("Please select a date"),
+        start_date: yup.string("Please select a date").required("Please select a date").default(format(new Date(),"yyyy-MM-dd")),
+        end_date: yup.string("Please select a date").required("Please select a date").default(format(new Date(),"yyyy-MM-dd")),
       })
     )
   });
@@ -63,8 +63,8 @@ function WorkHistorySilder({
       [{
         job_title: "",
         place_work: "",
-        start_date: "",
-        end_date: ""
+        start_date: format(new Date(),"yyyy-MM-dd"),
+        end_date: format(new Date(),"yyyy-MM-dd")
       }]
   );
 
@@ -72,8 +72,8 @@ function WorkHistorySilder({
     jobFields.push({
       job_title: "",
       place_work: "",
-      start_date: "",
-      end_date: ""
+      start_date: format(new Date(),"yyyy-MM-dd"),
+      end_date: format(new Date(),"yyyy-MM-dd")
     })
     setjobFields([...jobFields]);
     console.log("edu", jobFields);
@@ -124,6 +124,10 @@ function WorkHistorySilder({
                   {jobFields !== null
                     ? jobFields.length > 0 &&
                     jobFields.map((element, i) => (
+                      <>
+                      {i > 0 && (
+                        <div className="divider-line"></div>
+                      )}
                       <div key={i}>
                         <div className="row work_row">
                           <div className="col-sm-6">
@@ -154,46 +158,23 @@ function WorkHistorySilder({
 
                           <div className="col-sm-6">
                             <div className="f_group">
-                              {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-
-                                <Controller
-                                  control={control}
-                                  name="startdate"
-                                  render={({ field: { value, onChange } }) => (
-                                    <DatePicker
-                                      inputFormat="MM/yyyy"
-                                      views={['year', 'month']}
-                                      value={startvalue}
-                                      onChange={value => {
-                                        setValue(`job_exp[${i}].start_date`, moment(value).format('MM-DD-YYYY'))
-                                        setStartValue(value)
-                                      }
-                                      }
-                                      renderInput={(params) => (
-                                        <TextField {...params} className="mr-10 mt-5" />
-                                      )}
-                                    />
-                                  )}
-                                >
-
-                                </Controller>
-                              </LocalizationProvider> */}
+                            <label>Start Date</label>
                               <input
                                 className="f_control"
-                                type="month"
+                                type="date"
                                 placeholder="mm/yyyy"
                                 name="startdate"
                                 onChange={(e) => {
                                   setValue(
                                       `job_exp[${i}].start_date`,
-                                      moment(e.target.value).format("MM-DD-YYYY")
+                                      e.target.value
                                     );
                                     // setDateLimit()
                                     handleStartDate(e,i)
                                 }}
                                 defaultValue ={  user?.job_exp && user?.job_exp[i]?.start_date ?
-                                  format(new Date(user?.job_exp && user?.job_exp[i]?.start_date), "yyyy-MM") : 
-                                  ''}
+                                 user?.job_exp && format(new Date(user?.job_exp[i]?.start_date),"yyyy-MM-dd") : 
+                                 format(new Date(),"yyyy-MM-dd") }
                               />
                             </div>
                             {errors && errors.job_exp && <p style={{ color: 'red' }} > {errors?.job_exp[i]?.start_date ? errors?.job_exp[i]?.start_date.message : ""} </p>}
@@ -202,46 +183,22 @@ function WorkHistorySilder({
 
                           <div className="col-sm-6">
                             <div className="f_group">
-                              {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-
-                                <Controller
-                                  control={control}
-                                  name="enddate"
-                                  render={({ field: { value, onChange } }) => (
-                                    <DatePicker
-                                      inputFormat="MM/yyyy"
-                                      views={['year', 'month']}
-                                      value={endvalue}
-                                      label="End Date"
-                                      onChange={value => {
-                                        setValue(`job_exp[${i}].end_date`, moment(value).format('MM-DD-YYYY'))
-                                        setEndValue(value)
-                                      }
-                                      }
-                                      renderInput={(params) => (
-                                        <TextField {...params} className="mr-10 mt-5" />
-                                      )}
-                                    />
-
-                                  )}
-                                >
-                                </Controller>
-                              </LocalizationProvider> */}
+                            <label>End Date</label>
                               <input
                                 className="f_control"
-                                type="month"
+                                type="date"
                                 placeholder="mm/yyyy"
                                 name="endvalue"
                                 onChange={(e) => {
                                   setValue(
                                       `job_exp[${i}].end_date`,
-                                      moment(e.target.value).format("MM-DD-YYYY")
+                                      e.target.value
                                     );
                                 }}
                                 min={dateLimit[i]}
                                 defaultValue ={  user?.job_exp && user?.job_exp[i]?.end_date ?
-                                  format(new Date(user?.job_exp && user?.job_exp[i]?.end_date), "yyyy-MM") : 
-                                  ''}
+                                 user?.job_exp && format(new Date(user?.job_exp[i]?.end_date),"yyyy-MM-dd"): 
+                                 format(new Date(),"yyyy-MM-dd")}
                               />
                              {errors && errors.job_exp && <p style={{ color: 'red' }} > {errors?.job_exp[i]?.end_date ? errors?.job_exp[i]?.end_date.message : ""} </p>}
                             </div>
@@ -250,6 +207,7 @@ function WorkHistorySilder({
                         </div>
                         {i > 0 &&<p onClick={() => deleteField(i)} className="addedu"> - Remove Field</p>}
                       </div>
+                      </>
                     ))
                     : []}
                 </div>

@@ -1,10 +1,11 @@
-import React from "react";
+import React,{useState} from "react";
 import ClinicProfileDisplay from "./ClinicProfileDisplay";
 import { Link, Redirect } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Pagination } from "./pagination";
+import axios from "axios";
 
 function ContactInfoSlider({
   activeStep,
@@ -32,8 +33,37 @@ function ContactInfoSlider({
 		),
     confirmpassword: yup.string()
      .oneOf([yup.ref('password'), null], "Password and confirm match doesn't match"),
-     phone: yup.string().matches(/^\d{10}$/, {message: "Please enter valid number.", excludeEmptyString: false})
-	})
+     phone: yup.string().required("Please enter valid number.").min(14,"Please enter valid number.").max(16,"Please enter valid number.")
+    // phone: yup.string().required("Please enter valid number.")
+  })
+  
+  const handlePhoneChange = (e) => {
+		const value = e.target.value
+			.replace(/-/g, "")
+			.split("")
+			.filter((x) => new RegExp(/[0-9]/g).test(x))
+			.slice(0, 10);
+		let output = "";
+		for (var i = 0; i < value.length; i++) {
+
+      if(i === 0 ){
+        output += "(";
+      }
+
+      if(i === 3 ){
+        output += ")";
+      }
+
+			if (i === 3 || i == 6) {
+				output += "-";
+			}
+			output += value[i];
+		}
+
+		setValue("phone", output, { shouldTouch: true, shouldValidate: true });
+	};
+  const [emailError,setEmailError] = useState("")
+  const [nextDisable,setnextDisable] = useState(false)
 
   const {
     setValue,
@@ -48,6 +78,39 @@ function ContactInfoSlider({
      ...user,
     },
   });
+
+  const onEmailChaneg = (e) => {
+    setValue('email',e.target.value)
+    var filter = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (filter.test(e.target.value)) {
+          axios
+          .get("/users",{params: {
+            email: e.target.value
+            }}).then(response => {
+              console.log("res", response.data.length);
+              // setSkill(response.data);
+              if(response.data.length > 0){
+              console.log("res", response.data.length);
+              console.log("ininin");
+                setEmailError("Email already exists, please try another one.")
+                setnextDisable(true)
+              }else{
+                setEmailError(" ")
+                setnextDisable(false)
+              }
+            })
+            .catch(function(error) {
+              // handle error
+              console.log(error);
+            });
+            return false;
+        }else{
+          setEmailError("Invalid email format")
+          setnextDisable(false)
+
+        }
+  
+  }
 
   return (
     <div className="item_main">
@@ -73,8 +136,11 @@ function ContactInfoSlider({
                     type="text"
                     placeholder="Email Address"
                     {...register("email")}
+                    onChange={(e)=> onEmailChaneg(e)}
                   />
-                  <p style={{color: 'red'}} > {errors.email ? errors.email.message : ""} </p>
+                  {emailError == false && errors?.email?.message !== "Invalid email format"  ? 
+                       <p style={{color: 'red'}} > {errors.email ? errors.email.message : ""} </p> :  ""}
+                  <p style={{color: 'red'}} > {emailError ? emailError : ""} </p>
                 </div>
                 <div className="f_group">
                   <input
@@ -83,16 +149,9 @@ function ContactInfoSlider({
                     autoComplete="off"
                     placeholder="Phone Number"
                     {...register("phone")}
+                    onChange={handlePhoneChange}
                   />
                   <p style={{color: 'red'}} > {errors.phone ? errors.phone.message : ""} </p>
-                </div>
-                <div className="f_group">
-                  <input
-                    className="f_control"
-                    type="username"
-                    placeholder="Username"
-                    {...register("username")}
-                  />
                 </div>
                 <div className="f_group">
                   <input
@@ -114,6 +173,7 @@ function ContactInfoSlider({
                 </div>
               </div>
               <Pagination
+                nextDisable={nextDisable}
                 activeStep={activeStep}
                 steps={steps}
                 handleReset={handleReset}

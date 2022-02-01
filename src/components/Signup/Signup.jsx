@@ -287,7 +287,7 @@ class Signup extends Component {
                                             <div className="mb-0 fs-sm text-center text-muted">
                                                 Already have an account? <Link to="/signin">Login</Link>
                                             </div>
-                                            <div className="mt-5 sign-social mb-0 fs-sm text-center text-muted">
+                                            {/* <div className="mt-5 sign-social mb-0 fs-sm text-center text-muted">
                                                 Or Login With
                                                 <ul className="list-inline d-inline-block ml-3 mb-0">
                                                     <li className="d-inline-block mr-2">
@@ -306,7 +306,7 @@ class Signup extends Component {
                                                         </Link>
                                                     </li>
                                                 </ul>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

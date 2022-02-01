@@ -25,7 +25,7 @@ function ClinicProfileDisplay({
               <div
                 className={`label_data ${!user?.email && "label_data_placeholder"}`}
               >
-                {user?.email && `Email: ${user?.email}`} <br/>{user?.phone && `  Phone: ${user?.phone}`}<br/> {user?.username && `Username: ${user?.username}`}
+                {user?.email && `Email: ${user?.email}`} <br/>{user?.phone && `  Phone: ${user?.phone}`}
               </div>
             </div>
 
@@ -97,7 +97,7 @@ function ClinicProfileDisplay({
               user?.hours_time.map((element , i) =>{
                 return(
                   element,
-                  workSituatuonValue.map((val) => (
+                  availabilityValue.map((val) => (
                     val.id == user?.hours_time[i] ?
                     ( <div> {val.title} </div>)
                        : ""
@@ -110,7 +110,7 @@ function ClinicProfileDisplay({
               user?.contract_type_id.map((element , i) =>{
                 return(
                   element,
-                  availabilityValue.map((val) => (
+                  workSituatuonValue.map((val) => (
                     val.id == user?.contract_type_id[i] ?
                     ( <div> {val.title} </div>)
                        : ""

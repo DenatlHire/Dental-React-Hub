@@ -14,8 +14,14 @@ class Signin extends Component {
         };
         console.log(this.props)
     }
+
+    componentDidMount(prevProps) {
+        // Typical usage (don't forget to compare props):
+        document.body.classList.add('foo_shape_img');
+      }
+
     submitUserLogin() {
-        var user_id = null;
+        var user_id = null; 
         axios.post('auth/local', {
             identifier: this.state.email,
             password: this.state.password
@@ -27,7 +33,6 @@ class Signin extends Component {
                 // console.log('User token', response.data.jwt);
                 localStorage.setItem("user", JSON.stringify(response.data.user));
                 localStorage.setItem("token", response.data.jwt);
-                
                 user_id = response.data.user.id;
                 if(response.data.user.type == 1){
                     console.log("response ====>",response.data);
@@ -38,19 +43,14 @@ class Signin extends Component {
                             }
                         })
                         .then(response => {
+                            localStorage.setItem("user-info", JSON.stringify(response?.data[0]));
                             this.setState({
                                 lookingFor: response?.data[0]?.looking_for
                               });
                             // lookingFor = response.data[0].looking_for;
-                            console.log("lookingFor",this.state.lookingFor);
-                            if(this.state.lookingFor === "Yes"){
-                                window.location.href = '/myprofile';
-                                console.log("lookingFor",this.state.lookingFor);
-                                
-                            }else{
-                                window.location.href = '/myprofile';
-                                console.log("lookingFor else",this.state.lookingFor);
-                            }
+                            window.location.href = '/';
+                          
+                            
                         })
                 }else{
                     console.log("response ====>",response.data);
@@ -61,19 +61,16 @@ class Signin extends Component {
                             }
                         })
                         .then(response => {
+                            localStorage.setItem("user-info", JSON.stringify(response?.data[0]));
+                            console.log("rrrrrrrrrrr",response?.data.designation_id);
                             this.setState({
                                 lookingFor: response?.data[0]?.looking_for
                               });
                             // lookingFor = response.data[0].looking_for;
                             console.log("lookingFor",this.state.lookingFor);
-                            if(this.state.lookingFor === "Yes"){
-                                window.location.href = '/clinicprofile';
-                                console.log("lookingFor",this.state.lookingFor);
-                                
-                            }else{
-                                window.location.href = '/clinicprofile';
-                                console.log("lookingFor else",this.state.lookingFor);
-                            }
+                            window.location.href = '/findProfile';
+                            console.log("lookingFor",this.state.lookingFor);
+                            
                         })
                 }
                 
@@ -170,35 +167,39 @@ class Signin extends Component {
     }
     render() {
         return (
-            <section className="pt-4 py-md-10">
+            <section className="main_login">
                 <div className="container">
-                    <div className="row align-items-center shadow">
+                    <div className="row">
                         <div className="col-md-12 common-form">
-                            <div className="card card-row ">
-                                <div className="row gx-0">
-                                    <div className="col-12 col-md-6 d-none d-md-block bg-cover card-img-start" style={{ backgroundImage: 'url(./assets/img/photos/photo-8.jpg)' }}>
-                                        <img src="/assets/img/photos/photo-8.jpg" alt="..." className="img-fluid d-md-none invisible" />
-                                        <div className="shape shape-end shape-fluid-y svg-shim text-white d-none d-md-block">
-                                            <svg viewBox="0 0 112 690" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M116 0H51v172C76 384 0 517 0 517v173h116V0z" fill="currentColor" />
-                                            </svg>
+                            <div className="in_card">
+                                <div className="row">
+                                    <div className="col-12 col-md-5 d-none d-md-block bg-cover card-img-start in_card-left">
+                                        
+                                        <div className="form_left">
+                                           <div className="banner_desc_main">
+                                                <h2 className="banner_title">Connecting <span>Dental <br/>Professionals and Clinics</span></h2>
+                                                <div className="banner_desc_small">
+                                                    <p> Browse local dental jobs and opportunities. 
+                                                    <span>Create your profile and save your matches.</span></p>
+                                                </div>
+                                             
+                                           </div>
                                         </div>
+                                      
                                     </div>
-                                    <div className="col-12 col-md-6">
+                                    <div className="col-12 col-md-7">
                                         <div className="card-body">
 
-                                            <h2 className="mb-0 fw-bold text-center main_title" id="">
+                                            <h2 className="mb-0 fw-bold main_title" id="">
                                                 Login
                                             </h2>
-                                            <p className="mb-6 mt-2 text-center text-muted">
-                                                Simplify your workflow in minutes.
-                                            </p>
+                                    
                                             {this.state.hasError && (
                                                 <p className={this.state.forclass}>{this.state.hasError}</p>
                                             )}
                                             <form className="mb-4" onSubmit={(event) => this.preventSubmit(event)}>
                                                 <div className="form-group mb-5">
-
+                                                    <label>Email Address</label>
                                                     <input type="email" className="form-control" name="email" id="email"
                                                         value={this.state.email}
                                                         onChange={(event) => this.handleUserInput(event)}
@@ -206,24 +207,27 @@ class Signin extends Component {
                                                     <p className="text-danger">{this.state.emailError}</p>
                                                 </div>
                                                 <div className="form-group mb-5">
-
+                                                    <label>Password</label>
                                                     <input type="password" className="form-control" name="password" id="password"
                                                         value={this.state.password}
                                                         onChange={(event) => this.handleUserInput(event)}
                                                         placeholder="Your Password" />
                                                     <p className="text-danger">{this.state.passwordError}</p>
                                                 </div>
-                                                <button className="btn w-100 btn-primary" type="submit" onClick={() => this.submit()}>
+                                                 
+                                                <p className="mb-3 bottom_link  fs-sm text-center text-muted">
+                                                <Link to="/forgotpassword">Forgot Password?</Link>
+                                            </p>
+                                            <p className="mb-0 bottom_link fs-sm text-center text-muted">
+                                                Don't have an account yet? <Link to="/signupprofile">Sign Up</Link>
+                                            </p>
+
+                                                <button className="theme_btn_default" type="submit" onClick={() => this.submit()}>
                                                     Login
                                                 </button>
                                             </form>
-                                            <p className="mb-3  fs-sm text-center text-muted">
-                                                <Link to="/forgotpassword">Forgot Password?</Link>
-                                            </p>
-                                            <p className="mb-0 fs-sm text-center text-muted">
-                                                Don't have an account yet? <Link to="/signupprofile">Sign Up</Link>
-                                            </p>
-                                            <div className="mt-5 sign-social mb-0 fs-sm text-center text-muted">
+                                          
+                                            {/* <div className="mt-5 sign-social mb-0 fs-sm text-left text-muted">
                                                 Or Login With
                                                 <ul className="list-inline d-inline-block ml-3 mb-0">
                                                     <li className="d-inline-block mr-2">
@@ -242,7 +246,7 @@ class Signin extends Component {
                                                         </Link>
                                                     </li>
                                                 </ul>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

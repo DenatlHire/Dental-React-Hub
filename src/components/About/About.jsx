@@ -12,6 +12,7 @@ class About extends Component {
         };
     }
     componentDidMount() {
+        document.body.classList.add('foo_shape_img');
         axios.get("cms-pages/1")
                 .then(response => {
                     this.setState({

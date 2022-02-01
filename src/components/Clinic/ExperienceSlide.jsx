@@ -63,7 +63,7 @@ function NameSlide({
                 <div className="f_group km_group">
                   <input className="f_control"
                     {...register("clinical_experience")}
-                  type="number" placeholder="1" min="1" />
+                  type="number" placeholder="" min="0" />
                   <label>Years</label>
                 </div>
                 <p style={{color: 'red'}} > {errors.clinical_experience ? "Please add your clinical experience" : ""} </p>

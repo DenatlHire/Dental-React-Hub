@@ -42,25 +42,25 @@ function SkillSilder({
   });
 
 
-  const [skill, setSkill] = useState(skillValue);
+  const [skill, setSkill] = useState([]);
   const [selectSkill, setSelectSkill] = useState(getValues('skillset_type_id') ? getValues('skillset_type_id') : []);
-
-  // useEffect(() => {
-	// getSkills()
-  // },[]);
-
-  // const getSkills = () => {
-	// axios
-	// .get("/skillset-types")
-	// .then(response => {
-	//   console.log("res", response);
-	//   setSkill(response.data)
-	// })
-	// .catch(function(error) {
-	//   // handle error
-	//   console.log(error);
-	// });
-  // }
+  
+  const getSkills = () => {
+    axios
+    .get("/skillset-types",{params: {
+      designation_id: getValues('designation_id')
+      }}).then(response => {
+        console.log("res", response);
+        setSkill(response.data);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getSkills()
+  }, [])
   const handleSelectSkill = (e) =>{
     let selectedValue = selectSkill;
     console.log('event.target.checked;',e.target.checked)
@@ -103,7 +103,7 @@ function SkillSilder({
 
                 <div className="skill_wrap">
                   <ul>
-                    {skill.map((skill,i) => (
+                    {skill?.map((skill,i) => (
                       // .indexOf(skill.id) > -1 ? 'active' : ''
                       <li className={`${selectSkill.find(element => element == skill.id) ? 'active' : ''}`}>
                       <label>

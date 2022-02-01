@@ -50,7 +50,7 @@ function NameSlide({
 
   console.log("temp",errors);
 
-  const [skill, setSkill] = useState(skillValue);
+  const [skill, setSkill] = useState([]);
   const [selectSkill, setSelectSkill] = useState(getValues('skillset_type_id') ? getValues('skillset_type_id') : []);
 console.log(getValues('skillset_type_id'),'--->')
   useEffect(() => {
@@ -59,7 +59,9 @@ console.log(getValues('skillset_type_id'),'--->')
 
   const getSkills = () => {
 	axios
-	.get("/skillset-types")
+	.get("/skillset-types",{params: {
+    designation_id: getValues('designation_id')
+    }})
 	.then(response => {
 	  console.log("res", response);
 	  setSkill(response.data)
@@ -109,7 +111,7 @@ console.log(getValues('skillset_type_id'),'--->')
 
             <div className="skill_wrap">
               <ul>
-                {skill.map((skill,i) => (
+                {skill?.map((skill,i) => (
                   <li className={`${selectSkill.find(element => element == skill.id) ? 'active' : ''}`}>
                   <label>
                     <input type="checkbox"

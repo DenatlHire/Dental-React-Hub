@@ -30,7 +30,7 @@ class Testimonial extends Component {
         const responsive = {
             superLargeDesktop: {
               // the naming can be any, depends on you.
-              breakpoint: { max: 4000, min: 3000 },
+              breakpoint: { max: 4000, min: 1920 },
               items: 1              
             },
             desktop: {

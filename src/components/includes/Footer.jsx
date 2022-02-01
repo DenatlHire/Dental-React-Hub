@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import axios from 'axios';
+const userinfo = JSON.parse(localStorage.getItem('user'));
+const isAuthenticated = localStorage.getItem('token');
 
 class Footer extends Component {
     constructor(props) {
@@ -163,21 +165,21 @@ class Footer extends Component {
                                             Home
                                         </Link>
                                     </li>
-                                    <li className="d-inline-block mx-2">
+                                    {/* <li className="d-inline-block mx-2">
                                         <Link to="/about" className="f_in_links">
                                             About
                                         </Link>
-                                    </li>
-                                    <li className="d-inline-block mx-2">
+                                    </li> */}
+                                    {/* <li className="d-inline-block mx-2">
                                         <Link to="/blogs" className="f_in_links">
                                             Blogs
                                         </Link>
-                                    </li>
-                                    <li className="d-inline-block mx-2">
-                                        <Link to="/jobs" className="f_in_links">
+                                    </li> */}
+                                    {isAuthenticated && (<li className="d-inline-block mx-2">
+                                    <Link className="nav-link" to={ userinfo.type == '2' ? '/findProfile' : '/searchresult'} aria-haspopup="true" aria-expanded="false">
                                             Jobs
                                         </Link>
-                                    </li>
+                                    </li>)}
                                     <li className="d-inline-block mx-2">
                                         <Link to="/contact" className="f_in_links">
                                             Contact
