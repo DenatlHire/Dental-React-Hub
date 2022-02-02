@@ -9,6 +9,8 @@ import GooglePlacesAutocomplete, {
 } from "react-google-places-autocomplete";
 import {getClinicFilter,individualVisitPage,individualSaveJob} from '../FilterService'
 import {getSkills} from '../Service';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
 export default function SearchResult() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [designations, setDesignations] = useState([]);
@@ -21,11 +23,18 @@ export default function SearchResult() {
   const [filterText, setFilerText] = useState('');
   const [userExperience, setExperience] = useState(0);
   const [searchResult, setSearchResult] = useState([]);
+  const [searchResultListing, setSearchResultListing] = useState([]);
   const [searchLat, setSearchLat] = useState('');
   const [searchLng, setSearchLng] = useState('');
   const [loading, setloading] = useState(true);
   const [address, setAddress] = useState('address');
   const divRef = useRef(null)
+  const [count, setCount] = useState({
+    prev: 0,
+    next: 5
+  })
+  const [hasMore, setHasMore] = useState(true);
+  
   const locationChange = (data) =>{
     console.log(data);
     if(data){
@@ -105,7 +114,16 @@ export default function SearchResult() {
     getdesSkills(e.id)
     setSelectedSkill(null)
   }
-
+  const getMoreData = () => {
+    if (searchResultListing.length === searchResult.length) {
+      setHasMore(false);
+      return;
+    }
+    setTimeout(() => {
+      setSearchResultListing(searchResultListing.concat(searchResult.slice(count.prev + 5, count.next + 5)))
+    }, 2000)
+    setCount((prevState) => ({ prev: prevState.prev + 5, next: prevState.next + 5 }))
+  }
   const onSkillChange = (e) => {
     // let Result = e.map(choice => (choice.id));
     // console.log('res==>',Result)
@@ -146,8 +164,10 @@ export default function SearchResult() {
       }, 1000);
       if('data' in res){
         setSearchResult(res.data)
+        setSearchResultListing(res.data.slice(count.prev, count.next))
       }else{
         setSearchResult([])
+        setSearchResultListing([])
       }
     })
   }
@@ -313,8 +333,15 @@ export default function SearchResult() {
             </div>
             {loading ? <div className="spinnerParent"><div id="loadingSearch"></div></div> :
               <>
-              {searchResult.length > 0 ?
-              searchResult.map((data,i)=>{
+              <InfiniteScroll
+          dataLength={searchResultListing.length}
+          next={getMoreData}
+          hasMore={hasMore}
+          loader={<div className="spinnerParent" style={{marginTop:"10px"}}><div id="loadingSearch"></div></div>}
+          
+        >
+              {searchResultListing.length > 0 ?
+              searchResultListing.map((data,i)=>{
                 
               return (
               <div className="in_result_box success_saved">
@@ -395,6 +422,7 @@ export default function SearchResult() {
               :
                 <div className="in_result_box"><p className="no_data">No Data Found</p></div>
               }
+              </InfiniteScroll>
               </>
             }
           </div>
