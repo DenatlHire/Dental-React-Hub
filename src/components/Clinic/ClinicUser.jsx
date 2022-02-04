@@ -1829,7 +1829,7 @@ export default function ClinicUser(props) {
                   {/* end */}
                 </div>
               </div>
-              <div className="col-12">
+              {/* <div className="col-12">
                     <div className="pr-bot-btn">
                     <span
                         onClick={()=>changeIntrestedStatus('No')}
@@ -1844,7 +1844,7 @@ export default function ClinicUser(props) {
                         Looking for opportunity
                       </span>
                     </div>
-                  </div>
+                  </div> */}
             </div>
           </div>
         </div>

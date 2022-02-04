@@ -379,7 +379,7 @@ export default function SearchResult() {
                         <p>{data.description}</p>
                       </div>
                       <div class="title_wrap">
-                          <h2 class="us_name">Doctor of   {designations && designations?.map((value) => {
+                          <h2 class="us_name">{designations && designations?.map((value) => {
                             return (
                               <>{value.id === parseInt(data.roles) ? value.name : ""}</>
                             )

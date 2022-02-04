@@ -110,7 +110,7 @@ export default function MyJobs() {
                   <div className="in_result_box ">
                     <div className="in_search_top">
                       <h2 className="main_s_title">
-                        Doctor of {" "} {data?.job_title}
+                        {data?.job_title}
                         {/* {designations && designations?.map((value) => {
                             return (
                               <>{value.id === parseInt(data.job_title) ? value.name : ""}</>

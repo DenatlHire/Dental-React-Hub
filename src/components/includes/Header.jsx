@@ -99,7 +99,7 @@ class Header extends Component {
 
                               <div className="noti_btn">
                                  <Link className="n_icon" to="/notification"><i class="fa fa-bell" aria-hidden="true"></i>
-                                    <span>{this.state.notification}</span>
+                                 {this.state.notification > 0 &&<span>{this.state.notification}</span>}
                                  </Link>
                                  <Link className="n_icon" to="/#"><i class="fa fa-envelope" aria-hidden="true"></i>
                                     <span>5</span>

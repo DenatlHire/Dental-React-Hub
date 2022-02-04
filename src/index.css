@@ -3615,6 +3615,10 @@ p.addedu {
 }
 
 .search_result_wrap .in_result_box .result_bottom_sec .user_left_sec .use_image .thumbnail-container .thumbnail img {
+  border: 7px solid transparent;
+  border-radius: 100%;
+}
+.search_result_wrap .in_result_box .result_bottom_sec .user_left_sec .use_image .thumbnail-container .thumbnail img.looking {
   border: 7px solid #FFA000;
   border-radius: 100%;
 }

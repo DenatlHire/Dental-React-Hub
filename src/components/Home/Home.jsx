@@ -199,13 +199,13 @@ function Home(props) {
                       <div className="use_image">
                         <div className="thumbnail-container">
                           <div className="thumbnail">
-                            <img src={data.url ? window.baseURL + data.url : "/assets/img/dental_img.png"} alt="Dental" />
+                            <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" className={data.looking_for == 'Yes' && 'looking'} />
                           </div>
                         </div>
                       </div>
 
                       <div className="user_info_in">
-                        <div className="hiring_btn">
+                      <div className="hiring_btn">
                           <a href="#" title="Currently Hiring"><i class="fa fa-check" aria-hidden="true"></i> This Company Matches your Profile</a>
                         </div>
                         <div className="us_btn">
@@ -223,7 +223,7 @@ function Home(props) {
                         <p>{data.description}</p>
                       </div>
                       <div class="title_wrap">
-                          <h2 class="us_name">Doctor of   {designations && designations?.map((value) => {
+                          <h2 class="us_name">{designations && designations?.map((value) => {
                             return (
                               <>{value.id === parseInt(data.roles) ? value.name : ""}</>
                             )
@@ -297,15 +297,15 @@ function Home(props) {
                   <div className="use_image">
                     <div className="thumbnail-container">
                       <div className="thumbnail">
-                        <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" />
+                      <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" className={data.looking_for == 'Yes' && 'looking'} />
                       </div>
                     </div>
                   </div>
 
                   <div className="user_info_in">
-                    <div className="hiring_btn">
+                    {data.looking_for == 'Yes' && <div className="hiring_btn">
                       <a href="#" title="Looking for Work"> <i class="fa fa-briefcase" aria-hidden="true"></i> Looking for Work</a>
-                    </div>
+                    </div>}
                     <div className="us_btn">
                       <ul>
                         <li><Link onClick={()=>{clinicProfileVisite(data.user_id)}} target={'_blank'} to={`/individualProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
@@ -318,7 +318,7 @@ function Home(props) {
                 <div className="user_right_sec">
 
                   <div className="title_wrap">
-                    <h2 className="us_name">Doctor of {designations && designations?.map((value) => {
+                    <h2 className="us_name">{designations && designations?.map((value) => {
                             return (
                               <>{value.id === parseInt(data.designation_id) ? value.name : ""}</>
                             )

@@ -132,7 +132,7 @@ export default function SavedJobs() {
               return (
               <div className="in_result_box success_saved">
                   <div className="in_search_top">
-                    <h2 className="main_s_title">{data.job_title}</h2>
+                    <h2 className="main_s_title">{data.clinicname}</h2>
                     <span className="s_designation">{data.address}</span>
                     <div onClick={()=>savedSearch(i)} class={`saved_icon active`}></div>
                   </div>
@@ -165,7 +165,7 @@ export default function SavedJobs() {
                         <p>{data.description}</p>
                       </div>
                       <div class="title_wrap">
-                          <h2 class="us_name">Doctor of   {designations && designations?.map((value) => {
+                          <h2 class="us_name">  {designations && designations?.map((value) => {
                             return (
                               <>{value.id === parseInt(data.roles) ? value.name : ""}</>
                             )

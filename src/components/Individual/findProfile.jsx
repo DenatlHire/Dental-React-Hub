@@ -294,16 +294,12 @@ export default function FindProfile() {
                       value:addressValue
                     }}
                   />
-                  {/* <i className="fa fa-map-marker marker-location-icon"></i> */}
                 </div>
-                  {/* <Select className="basic-multi-select" options={LocationOptions} /> */}
-                  {/* <input type="text" class="form-control border-0 px-1" placeholder="Location..."/> */}
-                  </div>
+                   </div>
                 </div>
                 <div class="col-sm-4 col-lg-4">
                 <label>Experience (In Years)</label>
                   <div class="input-group input-group-lg"><span class="input-group-text border-0 pe-1"><i class="fe fe-map-pin"></i></span>
-                  {/* <Select className="basic-multi-select" options={RolesOptions} /> */}
                   <div className="f_group km_group">
                   <input className="form-control border-0 px-1"
                   type="number" min="0" placeholder="Experience" value={userExperience} onChange={(e)=>{setExperience(e.target.value)}} />
@@ -367,15 +363,15 @@ export default function FindProfile() {
                   <div className="use_image">
                     <div className="thumbnail-container">
                       <div className="thumbnail">
-                        <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" />
+                        <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" className={data.looking_for == 'Yes' && 'looking'} />
                       </div>
                     </div>
                   </div>
 
                   <div className="user_info_in">
-                    <div className="hiring_btn">
+                    {data.looking_for == 'Yes' && <div className="hiring_btn">
                       <a href="#" title="Looking for Work"> <i class="fa fa-briefcase" aria-hidden="true"></i> Looking for Work</a>
-                    </div>
+                    </div>}
                     <div className="us_btn">
                       <ul>
                         <li><Link onClick={()=>{clinicProfileVisite(data.user_id)}} target={'_blank'} to={`/individualProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
@@ -388,7 +384,7 @@ export default function FindProfile() {
                 <div className="user_right_sec">
 
                   <div className="title_wrap">
-                    <h2 className="us_name">Doctor of {designations && designations?.map((value) => {
+                    <h2 className="us_name">{designations && designations?.map((value) => {
                             return (
                               <>{value.id === parseInt(data.designation_id) ? value.name : ""}</>
                             )

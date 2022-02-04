@@ -145,15 +145,15 @@ export default function SavedMatches() {
                   <div className="use_image">
                     <div className="thumbnail-container">
                       <div className="thumbnail">
-                        <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" />
+                      <img src={data.url ? window.baseURL + data.url : df_profile_photo} alt="avtar" className={data.looking_for == 'Yes' && 'looking'} />
                       </div>
                     </div>
                   </div>
 
                   <div className="user_info_in">
-                    <div className="hiring_btn">
+                    {data.looking_for == 'Yes' && <div className="hiring_btn">
                       <a href="#" title="Looking for Work"> <i class="fa fa-briefcase" aria-hidden="true"></i> Looking for Work</a>
-                    </div>
+                    </div>}
                     <div className="us_btn">
                       <ul>
                         <li><Link target={'_blank'} to={`/individualProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
@@ -166,7 +166,7 @@ export default function SavedMatches() {
                 <div className="user_right_sec">
 
                   <div className="title_wrap">
-                    <h2 className="us_name">Doctor of {designations && designations?.map((value) => {
+                    <h2 className="us_name"> {designations && designations?.map((value) => {
                       return (
                         <>{value.id === parseInt(data.designation_id) ? value.name : ""}</>
                       )
