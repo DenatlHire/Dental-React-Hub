@@ -1,6 +1,7 @@
 // import logo from './logo.svg';
 // import './App.css';
 // import ReactDOM from 'react-dom';
+import './App.Messaging.css';
 import {
   BrowserRouter as Router,
   Switch,
@@ -16,6 +17,7 @@ import Signup from "./components/Signup/Signup";
 import Forgotpassword from "./components/Forgotpassword/Forgotpassword";
 import Reset from "./components/Reset/Reset";
 import Jobs from "./components/Jobs/Jobs";
+import Messaging from './components/Messaging/Messaging';
 import Contact from "./components/Contact/Contact";
 import Blogsin from "./components/Blogsin/Blogsin";
 import Blogdetail from "./components/Blogdetail/Blogdetail";
@@ -141,6 +143,9 @@ function App() {
           </Route>
           <Route path="/contact">
             <Contact />
+          </Route>
+          <Route path="/messaging/:id?">
+            <Messaging />
           </Route>
           <Route path="/blogdetail">
             <Blogdetail />
