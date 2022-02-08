@@ -157,7 +157,7 @@ export default function SavedMatches() {
                     <div className="us_btn">
                       <ul>
                         <li><Link target={'_blank'} to={`/individualProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
-                        <li><a className='msg-btn' href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a></li>
+                        <li><a className='msg-btn' href={`/messaging/?recipient=${Buffer.from(data.user_id.toString()).toString('base64')}`} title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a></li>
                       </ul>
                     </div>
                   </div>

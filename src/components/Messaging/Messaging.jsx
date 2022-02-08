@@ -9,6 +9,8 @@ import Icon from "./components/Icon";
 import Convo from "./components/Convo";
 import { useInterval } from 'ahooks';
 import { useParams, useHistory } from "react-router-dom";
+import { useQuery } from './hooks/useQuery';
+import { useAxios } from './hooks/useAxios';
 
 import axios from "axios";
 import { groupBy } from "lodash";
@@ -17,58 +19,24 @@ import Sidebar from './components/Sidebar';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 dayjs.extend(localizedFormat);
 
-const Messaging = () => {
-	const { id: targetConversationId } = useParams();
-	const history = useHistory()
 
+const Messaging = () => {
 	const lastMsgRef = useRef(null);
+	const history = useHistory();
+	const { id: targetConversationId } = useParams();
+	const query = useQuery();
+
 	const [messageHistory, setMessageHistory] = useState([]);
 
-	const [conversations, setConversations] = useState([]);
-	const [currentUser, setCurrentUser] = useState({});
+	const [conversations, conversationsLoading] = useConversations(targetConversationId);
+	const [currentUserInfo] = useCurrentUserInfo();
 
-	useEffect(() => {
-		getCurrentUser();
+	const recipientId = parseInt(query.get('recipient'));
 
-		async function getCurrentUser() {
-			const userMeResp = await axios.get('/users/me');
-			setCurrentUser(userMeResp?.data);
-		}
-	}, []);
+	const [draftRecipientUserInfo] = useDraftRecipientUserInfo(conversations, recipientId, conversationsLoading, targetConversationId);
 
-	useEffect(() => {
-		getConversations();
-
-		async function getConversations() {
-			const conversationResp = await axios.get('/conversation');
-			setConversations(conversationResp?.data);
-
-			if (!targetConversationId) {
-				history.push(`/messaging/${conversationResp?.data?.[0]?.id}`)
-			}
-		}
-	}, [targetConversationId]);
-
-	console.log({
-		conversations
-	})
-
-	const [selectedUser] = useMemo(() =>
-		conversations?.filter((conv) => conv.id === Number(targetConversationId))
-	);
-
-	console.log({
-		selectedUser,
-		targetConversationId
-	})
-
-	// useEffect(() => {
-	// 	if (!user) history.push("/");
-	// 	else {
-	// 		scrollToLastMsg();
-	// 		setUserAsUnread(user.id);
-	// 	}
-	// }, []);
+	const selectedConvo = useMemo(() =>
+		conversations?.find((conv) => conv.id === Number(targetConversationId)));
 
 	useEffect(() => {
 		messageHistory?.length && scrollToLastMsg();
@@ -102,17 +70,22 @@ const Messaging = () => {
 		<>
 			<div className="my-5" style={{ height: '100px' }} />
 			<div className="chat-container h-100 overflow-hidden" style={{ maxWidth: '1200px', minHeight: '700px', maxHeight: '800px' }}>
-				<Sidebar conversations={conversations} currentUserId={currentUser?.id} />
+				<Sidebar
+					conversations={currentUserInfo && draftRecipientUserInfo
+						? [{ id: 'draft', participant: currentUserInfo, otherParticipant: draftRecipientUserInfo }, ...conversations]
+						: conversations}
+					currentUserId={currentUserInfo?.user_id}
+				/>
 				<div className="chat">
 					<div className="chat__body">
-						<div className="chat__bg"></div>
+						<div className="chat__bg" />
 
 						{/* Top Header */}
-						<Header user={selectedUser} currentUserId={currentUser?.id} />
+						<Header convo={selectedConvo} currentUserId={currentUserInfo?.user_id} />
 
 						{/* Displayed Chat Messages Section */}
 						<div className="chat__content">
-							<Convo lastMsgRef={lastMsgRef} messages={calanderDateByMessage} currentUserId={currentUser?.id} />
+							<Convo lastMsgRef={lastMsgRef} messages={calanderDateByMessage} currentUserId={currentUserInfo?.user_id} />
 						</div>
 
 						{/* New Message Input Section */}
@@ -136,7 +109,7 @@ const Messaging = () => {
 	);
 
 	async function onSubmitMessage(message) {
-		if (targetConversationId) {
+		if (targetConversationId && targetConversationId !== 'draft') {
 			await axios.post('/chat-message', {
 				message,
 				conversationId: targetConversationId, // if exists just provide this
@@ -145,6 +118,17 @@ const Messaging = () => {
 			const convoMessagesResp = await axios.get(`/conversation/${targetConversationId}`);
 			setMessageHistory(convoMessagesResp?.data);
 			scrollToLastMsg();
+		} else {
+			if (draftRecipientUserInfo) {
+				const convoMessagesResp = await axios.post('/chat-message', {
+					message,
+					otherParticipant: draftRecipientUserInfo.id,
+				});
+				setMessageHistory(convoMessagesResp?.data);
+				scrollToLastMsg();
+				history.push(`/messaging`);
+				scrollToLastMsg();
+			}
 		}
 	}
 
@@ -158,3 +142,46 @@ const Messaging = () => {
 };
 
 export default Messaging;
+
+function useCurrentUserInfo() {
+	const [currentUser, , loadingCurrentUser] = useAxios('/users/me', { loadingByDefault: true });
+	const currentUserInfoQuery = !loadingCurrentUser && currentUser
+		? `/user-informations?user_id=${currentUser.id}`
+		: undefined;
+	const [currentUserInfo,] = useAxios(currentUserInfoQuery, { loadingByDefault: true });
+	return [currentUserInfo];
+}
+
+function useConversations(targetConversationId) {
+	const history = useHistory()
+
+	const [convs, , loadingConversations] = useAxios('conversation', { loadingByDefault: true });
+	useEffect(() => {
+		const latestConversation = conversations?.[0];
+		if (targetConversationId && latestConversation?.id) {
+			history.push(`/messaging/${latestConversation?.id}`);
+		}
+	}, [convs]);
+	const conversations = convs || [];
+	return [conversations, loadingConversations]
+}
+
+function useDraftRecipientUserInfo(conversations, recipientId, loadingConversations, targetConversationId) {
+	const history = useHistory();
+
+	useEffect(() => {
+		if (!loadingConversations && recipientId) {
+			const hasUserBeenMessagedBefore = !!conversations.find(c => c.participant.user_id === recipientId || c.otherParticipant.user_id === recipientId);
+			if (!hasUserBeenMessagedBefore) {
+				history.push(`/messaging/draft?recipient=${recipientId}`);
+			}
+		}
+	}, [recipientId, loadingConversations]);
+
+	const draftRecipientId = targetConversationId === 'draft' ? recipientId : undefined;
+	const draftUserUrl = draftRecipientId ? `/user-informations?user_id=${draftRecipientId}` : undefined;
+
+	const [draftRecipientUserInfoList, , loadingDraftRecipient] = useAxios(draftUserUrl, { loadingByDefault: true });
+	const draftRecipientUserInfo = draftRecipientUserInfoList?.[0];
+	return [draftRecipientUserInfo];
+}

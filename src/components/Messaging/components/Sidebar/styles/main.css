@@ -1,6 +1,7 @@
 @import url(./darktheme.css);
 .sidebar {
     min-width: 300px;
+    max-width: 25%;
     flex: 40%;
     border-right: 2px solid lightgrey;
     display: flex;

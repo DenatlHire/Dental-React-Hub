@@ -367,7 +367,7 @@ export default function SearchResult() {
                         <div className="us_btn">
                           <ul>
                             <li><Link onClick={()=>clinicProfileVisite(data.user_id)} target={'_blank'} to={`/clinicProfileDetails/${Buffer.from(data.user_id.toString()).toString('base64')}`} title="View Profile">View Profile</Link></li>
-                            <li><a className='msg-btn' href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a></li>
+                            <li><a className='msg-btn' href={`/messaging/?recipient=${data.user_id}`} title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a></li>
                           </ul>
                         </div>
                       </div>

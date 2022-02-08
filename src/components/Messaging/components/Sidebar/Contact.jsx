@@ -1,12 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAxios } from "../../hooks/useAxios";
 // import { useUsersContext } from "context/usersContext";
 import personPng from './assets/person.png';
+import {useActualOtherParticipant} from '../../hooks/useActualOtherParticipant';
 
 const Contact = ({ convo, currentUserId }) => {
-	const [actualOtherParticipant] = [convo.participant, convo.otherParticipant].filter(p => p.id !== currentUserId)
+	// const actualRecipientId = [convo.participant?.user_id, convo.otherParticipant?.user_id].find(p => (p?.user_id || p) !== currentUserId)
 
-	const hasName = actualOtherParticipant.firstname || actualOtherParticipant.lastname;
+	// const userUrl = actualRecipientId ? `users/${actualRecipientId?.id || actualRecipientId}` : undefined;
+	// const [user, , userLoading] = useAxios(userUrl, { loadingByDefault: true });
+
+	const [user, userLoading] = useActualOtherParticipant(convo, currentUserId);
+
 	return (
 		<Link
 			className="sidebar-contact my-2"
@@ -22,7 +28,7 @@ const Contact = ({ convo, currentUserId }) => {
 			</div>
 			<div className="sidebar-contact__content">
 				<div className="sidebar-contact__top-content">
-					<h2 className="sidebar-contact__name mb-0">{hasName ? (`${actualOtherParticipant.firstname} ${actualOtherParticipant.lastname}`) : actualOtherParticipant.username} &bull; {actualOtherParticipant.role}</h2>
+					<h2 className="sidebar-contact__name mb-0">{getNameLine(user)}</h2>
 					{/* <span className="sidebar-contact__time">
 						{formatTime(lastMessage.time)}
 					</span> */}
@@ -30,9 +36,7 @@ const Contact = ({ convo, currentUserId }) => {
 				<div className="sidebar-contact__bottom-content ">
 					<p className="sidebar-contact__message-wrapper mb-0">
 						<span
-							className={`sidebar-contact__message ${
-								!!convo.unread ? "sidebar-contact__message--unread" : ""
-							}`}
+							className={`sidebar-contact__message ${!!convo.unread ? "sidebar-contact__message--unread" : ""}`}
 						>
 							{'some message'}
 							{/* {lastMessage?.content || '...'} */}
@@ -47,6 +51,16 @@ const Contact = ({ convo, currentUserId }) => {
 			</div>
 		</Link>
 	);
+
+	function getNameLine(user) {
+		if (!user) {
+			return [];
+		}
+
+		return (user.firstname || user.lastname)
+			? [user.firstname, user.lastname].join(' ')
+			: [user.clinicname, user.practice_type].join(' • ')
+	}
 };
 
 export default Contact;

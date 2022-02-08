@@ -14,6 +14,7 @@
 .chat {
     display: flex;
     position: relative;
+    flex: 1;
 }
 
 .chat__body {
