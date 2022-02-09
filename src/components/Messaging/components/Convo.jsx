@@ -20,10 +20,9 @@ const Convo = ({ lastMsgRef, messages: calanderDateByMessage, currentUserId }) =
 							dateIndex === formattedDatesSorted.length - 1 && msgIndex === messages.length - 1
 								? lastMsgRef
 								: undefined;
-
 						const isCurrentUserMessage = parseInt(message.senderId, 10) !== currentUserId;
 						return (
-							<div className="my-1">
+							<div key={`message.${msgIndex}.${dateIndex}`} className="my-1">
 								<div className="d-flex">
 									<div className={`mr-3 sidebar-contact__avatar-wrapper-small ${!isCurrentUserMessage ? 'hide-contact' : ''} align-self-end mb-2`}>
 										<img

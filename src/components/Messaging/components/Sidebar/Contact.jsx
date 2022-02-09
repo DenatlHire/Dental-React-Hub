@@ -3,15 +3,11 @@ import { Link } from "react-router-dom";
 import { useAxios } from "../../hooks/useAxios";
 // import { useUsersContext } from "context/usersContext";
 import personPng from './assets/person.png';
-import {useActualOtherParticipant} from '../../hooks/useActualOtherParticipant';
 
 const Contact = ({ convo, currentUserId }) => {
-	// const actualRecipientId = [convo.participant?.user_id, convo.otherParticipant?.user_id].find(p => (p?.user_id || p) !== currentUserId)
-
-	// const userUrl = actualRecipientId ? `users/${actualRecipientId?.id || actualRecipientId}` : undefined;
-	// const [user, , userLoading] = useAxios(userUrl, { loadingByDefault: true });
-
-	const [user, userLoading] = useActualOtherParticipant(convo, currentUserId);
+	const participantUserInfo = convo?.participant;
+	const otherParticipantUserInfo = convo?.otherParticipant;
+	const actualOtherParticipantUserInfo = [participantUserInfo, otherParticipantUserInfo].find(p => p.user_id.id !== currentUserId)
 
 	return (
 		<Link
@@ -28,7 +24,7 @@ const Contact = ({ convo, currentUserId }) => {
 			</div>
 			<div className="sidebar-contact__content">
 				<div className="sidebar-contact__top-content">
-					<h2 className="sidebar-contact__name mb-0">{getNameLine(user)}</h2>
+					<h2 className="sidebar-contact__name mb-0">{getNameLine(actualOtherParticipantUserInfo)}</h2>
 					{/* <span className="sidebar-contact__time">
 						{formatTime(lastMessage.time)}
 					</span> */}
@@ -52,14 +48,14 @@ const Contact = ({ convo, currentUserId }) => {
 		</Link>
 	);
 
-	function getNameLine(user) {
-		if (!user) {
+	function getNameLine(userInfo) {
+		if (!userInfo) {
 			return [];
 		}
 
-		return (user.firstname || user.lastname)
-			? [user.firstname, user.lastname].join(' ')
-			: [user.clinicname, user.practice_type].join(' • ')
+		return (userInfo.user_id.firstname || userInfo.user_id.lastname)
+			? [userInfo.user_id.firstname, userInfo.user_id.lastname].join(' ')
+			: [userInfo.user_id.clinicname, userInfo.practice_type].join(' • ')
 	}
 };
 

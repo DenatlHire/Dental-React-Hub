@@ -293,7 +293,7 @@
 .chat__scroll-btn {
     position: absolute;
     right: 15px;
-    bottom: 80px;
+    bottom: 120px;
     width: 42px;
     height: 42px;
     z-index: -1;
@@ -402,7 +402,7 @@
 
 .chat__input-wrapper {
     padding: 10px;
-    height: 60px;
+    /* max-height: 90; */
     position: relative;
     display: flex;
     align-items: center;
@@ -412,8 +412,8 @@
     color: #919191;
     margin-left: 8px;
     margin-right: 8px;
-    width: 28px;
-    height: 28px;
+    width: 38px;
+    height: 38px;
     padding: 3px;
     border-radius: 50%;
 }
@@ -474,7 +474,7 @@
     padding: 20px 10px;
     border-radius: 8px;
     flex: 1;
-    height: 100%;
+    /* height: 100%; */
 }
 
 .chat__input::placeholder {

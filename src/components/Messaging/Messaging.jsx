@@ -28,7 +28,7 @@ const Messaging = () => {
 
 	const [messageHistory, setMessageHistory] = useState([]);
 
-	const [conversations, conversationsLoading] = useConversations(targetConversationId);
+	const [conversations, conversationsLoading, refetchConversations] = useConversations(targetConversationId);
 	const [currentUserInfo] = useCurrentUserInfo();
 
 	const recipientId = parseInt(query.get('recipient'));
@@ -44,6 +44,7 @@ const Messaging = () => {
 
 	const messageChecks = useRef(0);
 
+	// TODO: when user submits a new message allow them to fetch again
 	useInterval(() => {
 		rehydrateConversationMessages();
 
@@ -69,23 +70,23 @@ const Messaging = () => {
 	return (
 		<>
 			<div className="my-5" style={{ height: '100px' }} />
-			<div className="chat-container h-100 overflow-hidden" style={{ maxWidth: '1200px', minHeight: '700px', maxHeight: '800px' }}>
+			<div className="chat-container h-100 overflow-hidden mb-5" style={{ maxWidth: '1200px', minHeight: '700px', maxHeight: '800px' }}>
 				<Sidebar
 					conversations={currentUserInfo && draftRecipientUserInfo
 						? [{ id: 'draft', participant: currentUserInfo, otherParticipant: draftRecipientUserInfo }, ...conversations]
 						: conversations}
-					currentUserId={currentUserInfo?.user_id}
+					currentUserId={currentUserInfo?.user_id?.id}
 				/>
 				<div className="chat">
 					<div className="chat__body">
 						<div className="chat__bg" />
 
 						{/* Top Header */}
-						<Header convo={selectedConvo} currentUserId={currentUserInfo?.user_id} />
+						<Header convo={selectedConvo} currentUserId={currentUserInfo?.user_id?.id} />
 
 						{/* Displayed Chat Messages Section */}
 						<div className="chat__content">
-							<Convo lastMsgRef={lastMsgRef} messages={calanderDateByMessage} currentUserId={currentUserInfo?.user_id} />
+							<Convo lastMsgRef={lastMsgRef} messages={calanderDateByMessage} currentUserId={currentUserInfo?.user_id?.id} />
 						</div>
 
 						{/* New Message Input Section */}
@@ -104,7 +105,7 @@ const Messaging = () => {
 					</div>
 				</div>
 			</div>
-			<div className="py-5" style={{ height: '200px' }} />
+			<div className="my-5" style={{ height: '220px' }} />
 		</>
 	);
 
@@ -120,14 +121,19 @@ const Messaging = () => {
 			scrollToLastMsg();
 		} else {
 			if (draftRecipientUserInfo) {
-				const convoMessagesResp = await axios.post('/chat-message', {
+				const createNewChat = await axios.post('/chat-message', {
 					message,
 					otherParticipant: draftRecipientUserInfo.id,
 				});
-				setMessageHistory(convoMessagesResp?.data);
-				scrollToLastMsg();
-				history.push(`/messaging`);
-				scrollToLastMsg();
+		
+				refetchConversations();
+				// const newConvoId = createResponse?.data?.conversation?.id;
+
+				// const convoMessagesResp = await axios.get(`/conversation/${newConvoId}`);
+				// setMessageHistory(convoMessagesResp?.data);
+				// scrollToLastMsg();
+				history.push(`/messaging/${createNewChat?.data?.conversation?.id}`);
+				// scrollToLastMsg();
 			}
 		}
 	}
@@ -149,13 +155,13 @@ function useCurrentUserInfo() {
 		? `/user-informations?user_id=${currentUser.id}`
 		: undefined;
 	const [currentUserInfo,] = useAxios(currentUserInfoQuery, { loadingByDefault: true });
-	return [currentUserInfo];
+	return [currentUserInfo?.[0]];
 }
 
 function useConversations(targetConversationId) {
 	const history = useHistory()
 
-	const [convs, , loadingConversations] = useAxios('conversation', { loadingByDefault: true });
+	const [convs, , loadingConversations, refetch] = useAxios('conversation', { loadingByDefault: true });
 	useEffect(() => {
 		const latestConversation = conversations?.[0];
 		if (targetConversationId && latestConversation?.id) {
@@ -163,7 +169,7 @@ function useConversations(targetConversationId) {
 		}
 	}, [convs]);
 	const conversations = convs || [];
-	return [conversations, loadingConversations]
+	return [conversations, loadingConversations, refetch]
 }
 
 function useDraftRecipientUserInfo(conversations, recipientId, loadingConversations, targetConversationId) {
@@ -171,11 +177,11 @@ function useDraftRecipientUserInfo(conversations, recipientId, loadingConversati
 
 	useEffect(() => {
 		if (!loadingConversations && recipientId) {
-			const hasUserBeenMessagedBefore = !!conversations.find(c => c.participant.user_id === recipientId || c.otherParticipant.user_id === recipientId);
+			const hasUserBeenMessagedBefore = !!conversations.find(c => c.participant.user_id.id === recipientId || c.otherParticipant.user_id.id === recipientId);
 			if (!hasUserBeenMessagedBefore) {
 				history.push(`/messaging/draft?recipient=${recipientId}`);
 			}
-		}
+		} 
 	}, [recipientId, loadingConversations]);
 
 	const draftRecipientId = targetConversationId === 'draft' ? recipientId : undefined;
@@ -183,5 +189,5 @@ function useDraftRecipientUserInfo(conversations, recipientId, loadingConversati
 
 	const [draftRecipientUserInfoList, , loadingDraftRecipient] = useAxios(draftUserUrl, { loadingByDefault: true });
 	const draftRecipientUserInfo = draftRecipientUserInfoList?.[0];
-	return [draftRecipientUserInfo];
+	return recipientId ? [draftRecipientUserInfo] : [];
 }

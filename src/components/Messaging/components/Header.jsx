@@ -1,9 +1,9 @@
 import React from "react";
-import { useActualOtherParticipant } from '../hooks/useActualOtherParticipant';
 
 const Header = ({ convo, currentUserId }) => {
-	// Ping every time user opens chat??
-	const [actualUser, isActualUserLoading] = useActualOtherParticipant(convo, currentUserId)
+	const participantUserInfo = convo?.participant;
+	const otherParticipantUserInfo = convo?.otherParticipant;
+	const actualOtherUserInfo = [participantUserInfo, otherParticipantUserInfo].find(p => p?.user_id?.id !== currentUserId)
 
 	return (
 		<header className="header chat__header py-4">
@@ -13,9 +13,9 @@ const Header = ({ convo, currentUserId }) => {
 
 			<div className="chat__contact-wrapper mx-3">
 				<div className="chat__contact-name h1 text-black">{
-					actualUser?.firstname || actualUser?.lastname
-						? (`${actualUser?.firstname} ${actualUser?.lastname}`)
-						: actualUser?.clinicname} &bull; {actualUser?.practice_type}
+					actualOtherUserInfo?.user_id?.firstname || actualOtherUserInfo?.user_id?.lastname
+						? (`${actualOtherUserInfo?.user_id?.firstname} ${actualOtherUserInfo?.user_id?.lastname}`)
+						: actualOtherUserInfo?.user_id?.clinicname} &bull; {actualOtherUserInfo?.practice_type}
 				</div>
 			</div>
 		</header>

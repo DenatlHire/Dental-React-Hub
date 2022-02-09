@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 export function useAxios(staticUrl, { loadingByDefault }) {
+    const requestRef = useRef();
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(loadingByDefault || false);
 
     useEffect(() => {
         if (staticUrl) {
+            requestRef.current = makeRequest;
             makeRequest();
         }
 
@@ -25,5 +27,7 @@ export function useAxios(staticUrl, { loadingByDefault }) {
         }
     }, [staticUrl]);
 
-    return [response, error, loading];
+    const refetch = requestRef.current;
+
+    return [response, error, loading, refetch];
 }
