@@ -42,6 +42,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-multi-carousel": "^2.6.3",
     "react-newline-to-break": "^1.0.6",
+    "react-query": "^3.34.14",
     "react-redux": "^7.2.6",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import "./styles/main.css";
 import "./styles/common.css";
 import "./styles/overrides.css";
@@ -9,8 +9,8 @@ import Icon from "./components/Icon";
 import Convo from "./components/Convo";
 import { useInterval } from 'ahooks';
 import { useParams, useHistory } from "react-router-dom";
-import { useQuery } from './hooks/useQuery';
-import { useAxios } from './hooks/useAxios';
+import { useUrlSearchParams } from './hooks/useUrlSearchParams';
+import { useQuery } from 'react-query';
 
 import axios from "axios";
 import { groupBy } from "lodash";
@@ -24,14 +24,17 @@ const Messaging = () => {
 	const lastMsgRef = useRef(null);
 	const history = useHistory();
 	const { id: targetConversationId } = useParams();
-	const query = useQuery();
-
-	const [messageHistory, setMessageHistory] = useState([]);
+	const searchParams = useUrlSearchParams();
+	const recipientId = parseInt(searchParams.get('recipient'));
 
 	const [conversations, conversationsLoading, refetchConversations] = useConversations(targetConversationId);
 	const [currentUserInfo] = useCurrentUserInfo();
 
-	const recipientId = parseInt(query.get('recipient'));
+	const { data: messageHistory, refetch: refreshMessages } = useQuery(
+		['convo-messages', 'conversation', targetConversationId], 
+		fetchConversationMessages, 
+		{ enabled: !!targetConversationId }
+	);
 
 	const [draftRecipientUserInfo] = useDraftRecipientUserInfo(conversations, recipientId, conversationsLoading, targetConversationId);
 
@@ -56,16 +59,16 @@ const Messaging = () => {
 				}, 90 * 1000);
 			} else {
 				messageChecks.current = messageChecks.current + 1;
-				const convoMessagesResp = await axios.get(`/conversation/${targetConversationId}`);
-				setMessageHistory(convoMessagesResp?.data);
+				refreshMessages();
 			}
 		}
 	}, targetConversationId ? 25 * 1000 : null, { immediate: true });
 
+	const messageIds = messageHistory?.map(m => m.id).join();
 	const calanderDateByMessage = useMemo(() => groupBy(messageHistory, chatMsg => {
 		const dayDate = dayjs(chatMsg.createdAt);
 		return `${dayDate.year()}-${dayDate.month() + 1}-${dayDate.day() + 1}`; // YYYY-MM-DD
-	}), [messageHistory?.length]);
+	}), [messageIds]);
 
 	return (
 		<>
@@ -116,8 +119,7 @@ const Messaging = () => {
 				conversationId: targetConversationId, // if exists just provide this
 			});
 
-			const convoMessagesResp = await axios.get(`/conversation/${targetConversationId}`);
-			setMessageHistory(convoMessagesResp?.data);
+			refreshMessages();
 			scrollToLastMsg();
 		} else {
 			if (draftRecipientUserInfo) {
@@ -125,15 +127,10 @@ const Messaging = () => {
 					message,
 					otherParticipant: draftRecipientUserInfo.id,
 				});
-		
-				refetchConversations();
-				// const newConvoId = createResponse?.data?.conversation?.id;
 
-				// const convoMessagesResp = await axios.get(`/conversation/${newConvoId}`);
-				// setMessageHistory(convoMessagesResp?.data);
-				// scrollToLastMsg();
+				refetchConversations();
 				history.push(`/messaging/${createNewChat?.data?.conversation?.id}`);
-				// scrollToLastMsg();
+				scrollToLastMsg();
 			}
 		}
 	}
@@ -150,26 +147,32 @@ const Messaging = () => {
 export default Messaging;
 
 function useCurrentUserInfo() {
-	const [currentUser, , loadingCurrentUser] = useAxios('/users/me', { loadingByDefault: true });
+	const { data: currentUser, isLoading: loadingCurrentUser } = useQuery(['me', '/users/me'], fetchUrl, {
+		enabled: true
+	});
 	const currentUserInfoQuery = !loadingCurrentUser && currentUser
 		? `/user-informations?user_id=${currentUser.id}`
 		: undefined;
-	const [currentUserInfo,] = useAxios(currentUserInfoQuery, { loadingByDefault: true });
+
+	const { data: currentUserInfo } = useQuery(['currentUser', currentUserInfoQuery], fetchUrl, {
+		enabled: !!currentUserInfoQuery
+	});
 	return [currentUserInfo?.[0]];
 }
 
 function useConversations(targetConversationId) {
 	const history = useHistory()
-
-	const [convs, , loadingConversations, refetch] = useAxios('conversation', { loadingByDefault: true });
+	const { data, isLoading, refetch } = useQuery(['conversation'], fetchConversations, {
+		enabled: true
+	});
 	useEffect(() => {
 		const latestConversation = conversations?.[0];
 		if (targetConversationId && latestConversation?.id) {
 			history.push(`/messaging/${latestConversation?.id}`);
 		}
-	}, [convs]);
-	const conversations = convs || [];
-	return [conversations, loadingConversations, refetch]
+	}, [data]);
+	const conversations = data || [];
+	return [conversations.sort((a, b) => b.id - a.id), isLoading, refetch]
 }
 
 function useDraftRecipientUserInfo(conversations, recipientId, loadingConversations, targetConversationId) {
@@ -181,13 +184,27 @@ function useDraftRecipientUserInfo(conversations, recipientId, loadingConversati
 			if (!hasUserBeenMessagedBefore) {
 				history.push(`/messaging/draft?recipient=${recipientId}`);
 			}
-		} 
+		}
 	}, [recipientId, loadingConversations]);
 
 	const draftRecipientId = targetConversationId === 'draft' ? recipientId : undefined;
 	const draftUserUrl = draftRecipientId ? `/user-informations?user_id=${draftRecipientId}` : undefined;
 
-	const [draftRecipientUserInfoList, , loadingDraftRecipient] = useAxios(draftUserUrl, { loadingByDefault: true });
-	const draftRecipientUserInfo = draftRecipientUserInfoList?.[0];
+	const { data } = useQuery(['draftUrl', draftUserUrl], fetchUrl, {
+		enabled: !!draftUserUrl
+	});
+	const draftRecipientUserInfo = data?.[0];
 	return recipientId ? [draftRecipientUserInfo] : [];
+}
+
+async function fetchUrl({ queryKey: [resource, url] }) {
+	return (await axios.get(`${url}`)).data
+}
+
+async function fetchConversations({ queryKey: [resource] }) {
+	return (await axios.get(`/${resource}`)).data
+}
+
+async function fetchConversationMessages({ queryKey: [, resource, id] }) {
+	return (await axios.get(`/${resource}/${id}`)).data
 }
