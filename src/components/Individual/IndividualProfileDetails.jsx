@@ -356,7 +356,7 @@ function IndividualProfileDetails(props) {
                 style={{ backgroundImage: `url("${banner_file}")` }}
               >
                 </div>
-                <a class="msg-btn" href={`/messaging/?recipient=${Buffer.from(urlid, 'base64').toString('ascii')}`} title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a>
+                <a class="msg-btn" href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a>
 
               <div className="user_bottom_sec">
                 

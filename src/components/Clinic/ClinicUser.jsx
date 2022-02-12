@@ -253,6 +253,8 @@ export default function ClinicUser(props) {
         setSelectSkill(skillset_type_id);
         
         setSelectedhourTime(hours_time);
+        setSelectSkillName(userInfo.skillset_type_name ? userInfo.skillset_type_name.split(/\s*,\s*/) : [])
+        setSelectedhourTimeName(userInfo.hours_time_name ? userInfo.hours_time_name.split(/\s*,\s*/) : [])
         setValue("skillset_type_id", userInfo.skillset_type_id);
         setValue("hours_time", userInfo.hours_time);
         setValue("officetype", userInfo.office_type_id);

@@ -64,7 +64,29 @@ function IndividualUser(props) {
   const df_profile_photo = profile_pic;
   const df_banner_photo = background_pic;
   const [AddressValue, setAddress] = useState('');
+  const [selectedworkSituatuon, setSelectedworkSituatuon] = useState(
+    data?.contract_type_id ? data?.contract_type_id : []
+  );
+  const [selectedWorkSituatuonName,setselectedWorkSituatuonName] = useState(data?.contract_type_name ? data?.contract_type_name.split(/\s*,\s*/) : []);
+  const [selectedOfficeType, setSelectedOfficeType] = useState(
+    data?.office_type_id ? data?.office_type_id : []
+  );
 
+  const [selectedhourTime, setSelectedhourTime] = useState(
+    data?.hours_time ? data?.hours_time : []
+  );
+
+  const [selectedhourTimeName, setSelectedhourTimeName] = useState(
+    data?.hours_time_name ? data?.hours_time_name.split(/\s*,\s*/) : []
+  );
+
+  const [selectSkill, setSelectSkill] = useState(
+    data && data.skillset_type_id ? data.skillset_type_id : []
+  );
+
+  const [selectSkillName, setSelectSkillName] = useState(
+    data && data.skillset_type_name ? data.skillset_type_name.split(/\s*,\s*/) : []
+  );
   useEffect(() => {
     getDesignation().then(res => {
       setDesignations(res);
@@ -259,6 +281,9 @@ function IndividualUser(props) {
             ? window.baseURL + userInfo.banner_photo.url
             : df_banner_photo
         );
+        setselectedWorkSituatuonName(userInfo.contract_type_name ? userInfo.contract_type_name.split(/\s*,\s*/): [])
+        setSelectSkillName(userInfo.skillset_type_name ? userInfo.skillset_type_name.split(/\s*,\s*/) : [])
+        setSelectedhourTimeName(userInfo.hours_time_name ? userInfo.hours_time_name.split(/\s*,\s*/) : [])
       })
       .catch(error => {
         console.log("error", error);
@@ -329,6 +354,7 @@ function IndividualUser(props) {
         console.log("data", error);
       });
   };
+
   // workSubmit
   const submit = e => {
     console.log("id =====>", usetInfo.firstname);
@@ -364,11 +390,11 @@ function IndividualUser(props) {
         designation_id: usetInfo.designation_id,
         office_type_id: selectedOfficeType.join(),
         contract_type_id: selectedworkSituatuon.join(),
-        contract_type_name: selectedWorkSituatuonName.join(),
+        contract_type_name: selectedWorkSituatuonName && selectedWorkSituatuonName.length > 0 ? selectedWorkSituatuonName.join() : data.contract_type_name,
         hours_time: selectedhourTime.join(),
-        hours_time_name: selectedhourTimeName.join(),
+        hours_time_name: selectedhourTimeName && selectedhourTimeName.length > 0 ? selectedhourTimeName.join() : data.hours_time_name,
         skillset_type_id: (data?.designation_id?.id == usetInfo.designation_id || data?.designation_id?.id == usetInfo.designation_id.id ) ? selectSkill.join() : '',
-        skillset_type_name: selectSkillName.join()
+        skillset_type_name: selectSkillName && selectSkillName.length > 0 ? selectSkillName.join() : data.skillset_type_name
       })
       .then(response => {
         // Handle success.
@@ -719,30 +745,7 @@ function IndividualUser(props) {
   };
 
 
-  const [selectedworkSituatuon, setSelectedworkSituatuon] = useState(
-    data?.contract_type_id ? data?.contract_type_id : []
-  );
-  const [selectedWorkSituatuonName,setselectedWorkSituatuonName] = useState(data?.contract_type_name ? data?.contract_type_name : []);
 
-  const [selectedOfficeType, setSelectedOfficeType] = useState(
-    data?.office_type_id ? data?.office_type_id : []
-  );
-
-  const [selectedhourTime, setSelectedhourTime] = useState(
-    data?.hours_time ? data?.hours_time : []
-  );
-
-  const [selectedhourTimeName, setSelectedhourTimeName] = useState(
-    data?.hours_time_name ? data?.hours_time_name : []
-  );
-
-  const [selectSkill, setSelectSkill] = useState(
-    data && data.skillset_type_id ? data.skillset_type_id : []
-  );
-
-  const [selectSkillName, setSelectSkillName] = useState(
-    data && data.skillset_type_name ? data.skillset_type_name : []
-  );
 
   const handleSelectSkill = (e,skillName) => {
     let selectedValue = selectSkill;
@@ -825,8 +828,9 @@ function IndividualUser(props) {
   const handleSelectSituation = (e,situationName) => {
     let selectedValue = selectedworkSituatuon;
     let selectedValueName = selectedWorkSituatuonName;
-    console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value,);
+    console.log('selectedValueName',selectedValueName)
+    // console.log("event.target.checked;", e.target.checked);
+    // console.log("event.target.value", e.target.value,);
     if (e.target.checked) {
       selectedValue.push(e.target.value);
       setSelectedworkSituatuon([...selectedValue]);
@@ -834,6 +838,7 @@ function IndividualUser(props) {
 
       // name
       selectedValueName.push(situationName);
+      console.log('selectedValueName',selectedValueName)
       setselectedWorkSituatuonName([...selectedValueName]);
       setValue("contract_type_name", selectedValueName);
       
