@@ -38,6 +38,7 @@ import IndividualProfileDetails from "./components/Individual/IndividualProfileD
 import ClinicUser from "./components/Clinic/ClinicUser";
 import SearchResult from "./components/Individual/SearchResult";
 import FindProfile from "./components/Individual/findProfile";
+import SearchProfile from "./components/Individual/searchProfile";
 import SavedMatches from "./components/Individual/SavedMatches";
 import SavedJobs from "./components/Individual/SavedJobs";
 import Notification from "./components/Individual/Notification";
@@ -105,6 +106,11 @@ function App() {
           {userType?.type === 2 && (
             <Route path="/individualProfileDetails/:urlid">
               <IndividualProfileDetails />
+            </Route>
+          )}
+          {userType?.type === 2 && (
+            <Route path="/searchProfile">
+              <SearchProfile />
             </Route>
           )}
           {userType?.type === 2 && (

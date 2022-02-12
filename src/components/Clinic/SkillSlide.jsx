@@ -52,7 +52,7 @@ function NameSlide({
 
   const [skill, setSkill] = useState([]);
   const [selectSkill, setSelectSkill] = useState(getValues('skillset_type_id') ? getValues('skillset_type_id') : []);
-console.log(getValues('skillset_type_id'),'--->')
+  const [selectSkillName, setSelectSkillName] = useState(getValues('skillset_type_name') ? getValues('skillset_type_name') : []);
   useEffect(() => {
 	getSkills()
   },[]);
@@ -71,23 +71,32 @@ console.log(getValues('skillset_type_id'),'--->')
 	  console.log(error);
 	});
   }
-  const handleSelectSkill = (e) =>{
+  const handleSelectSkill = (e,skillName) =>{
     let selectedValue = selectSkill;
-    console.log('event.target.checked;',e.target.checked)
-    console.log('event.target.value',e.target.value)
+    let selectedValueName = selectSkillName;
     if(e.target.checked){
       selectedValue.push(e.target.value)
-      console.log('selectSkill',selectedValue)
       setSelectSkill([...selectedValue])
       setValue('skillset_type_id',selectedValue)
+
+      // name
+      selectedValueName.push(skillName)
+      setSelectSkillName([...selectedValueName])
+      setValue('skillset_type_name',selectedValueName)
     }else{
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(skillName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log('selectSkill',selectedValue)
         setSelectSkill([...selectedValue])
         setValue('skillset_type_id',selectedValue)
+      }
 
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectSkillName([...selectedValueName])
+        setValue('skillset_type_name',selectedValueName)
       }
     }
   }
@@ -117,7 +126,7 @@ console.log(getValues('skillset_type_id'),'--->')
                     <input type="checkbox"
                      {...register("skillset_type_id")}
                       hidden value={skill.id} 
-                      onChange={(e)=>{handleSelectSkill(e)}}
+                      onChange={(e)=>{handleSelectSkill(e,skill.title)}}
                         />
                     {skill.title}
                   </label>

@@ -5,7 +5,7 @@ import nl2br from 'react-newline-to-break';
 import axios from 'axios';
 import Select from 'react-select';
 import {getNotification,markAsRead} from '../FilterService'
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 import dental_image from  "./../../images/clinic_profile.png";
 
 

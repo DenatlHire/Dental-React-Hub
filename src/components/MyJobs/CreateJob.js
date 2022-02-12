@@ -29,8 +29,10 @@ export default function CreateJob() {
   const [workSituatuon, setWorkSituatuon] = useState([]);
   const [usetInfo, setUsetInfo] = useState([]);
   const [selectSkill, setSelectSkill] = useState([]);
+  const [selectSkillName, setSelectSkillName] = useState([]);
   const [selectedworkSituatuon, setSelectedworkSituatuon] = useState([]);
   const [selectedhourTime, setSelectedhourTime] = useState([]);
+  const [selectedhourTimeName, setSelectedhourTimeName] = useState([]);
   const [user, setUser] = useState([]);
   const [dateLimit, setDateLimit] = useState()
   const history = useHistory();
@@ -113,25 +115,34 @@ export default function CreateJob() {
     setUsetInfo({ ...usetInfo, designation_id: e.currentTarget.value });
     setselectedOption(e.currentTarget.value);
     setValue("designation_id", e.currentTarget.value);
-    console.log("designation_id", e.currentTarget.value);
   };
 
-  const handleSelectSkill = e => {
+  const handleSelectSkill = (e,selectName) => {
     let selectedValue = selectSkill;
-    console.log("event.target.checked;", selectedValue);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectSkillName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
-      console.log("selectSkill", selectedValue);
       setSelectSkill([...selectedValue]);
       setValue("skillset_type_id", selectedValue);
+
+      // name
+      selectedValueName.push(selectName);
+      setSelectSkillName([...selectedValueName]);
+      setValue("skillset_type_name", selectedValueName);
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log("event.target.value", selectedValue.splice(index, 1));
         setSelectSkill([...selectedValue]);
         setValue("skillset_type_id", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectSkillName([...selectedValueName]);
+        setValue("skillset_type_name", selectedValueName);
       }
     }
   };
@@ -193,22 +204,33 @@ export default function CreateJob() {
     }
   };
 
-  const handleSelectTime = e => {
+  const handleSelectTime = (e,selectedName) => {
     let selectedValue = selectedhourTime;
-    console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectedhourTimeName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
       setSelectedhourTime([...selectedValue]);
       setValue("hours_time", selectedValue);
-      console.log("selectedValue_hour", selectedValue);
+
+      // name
+      selectedValueName.push(selectedName);
+      setSelectedhourTimeName([...selectedValueName]);
+      setValue("hours_time_name", selectedValueName);
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectedName);
       if (index > -1) {
         selectedValue.splice(index, 1);
         setSelectedhourTime([...selectedValue]);
         setValue("hours_time", selectedValue);
         console.log("selectedValue_hour", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectedhourTimeName([...selectedValueName]);
+        setValue("hours_time_name", selectedValueName);
       }
     }
   };
@@ -226,7 +248,8 @@ export default function CreateJob() {
 
   const handleSubmitForm = getdata => {
     setUser(getdata);
-    console.log("user", getdata);
+    console.log("getdata",getdata);
+    
     setAddJob({
       job_title: getdata.job_title,
       roles: getdata.designation_id,
@@ -235,9 +258,11 @@ export default function CreateJob() {
       longitude: getdata.longitude.toString(),
       address: getdata.address,
       skills: getdata.skillset_type_id.toString(),
-      skillset_type_id: getdata.skillset_type_id,
+      skillset_type_name: getdata.skillset_type_name.toString(),
+      skillset_type_id:getdata.skillset_type_id,
       user_id: storegUser.id,
       availability: getdata.hours_time.toString(),
+      hours_time_name: getdata.hours_time_name.toString(),
       start_date: getdata.start_date,
       description: getdata.description
     })
@@ -409,7 +434,7 @@ export default function CreateJob() {
                                                 value={skill.id}
                                                 {...register("skillset_type_id")}
                                                 onChange={e => {
-                                                  handleSelectSkill(e);
+                                                  handleSelectSkill(e,skill.title);
                                                 }}
                                                 checked={
                                                   selectSkill &&
@@ -532,7 +557,7 @@ export default function CreateJob() {
                                               type="checkbox"
                                               {...register("hours_time")}
                                               onChange={e => {
-                                                handleSelectTime(e);
+                                                handleSelectTime(e,ave.title);
                                               }}
                                               hidden
                                               value={ave.id}

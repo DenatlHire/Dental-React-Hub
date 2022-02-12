@@ -97,7 +97,7 @@ export const getTypes = async () => {
 };
 
 export const setAddJob = async (getdata) => {
-  console.log("data on submit ==>", getdata);
+  console.log("data on submit ========>", getdata);
 
   return new Promise((resolve, reject) => {
     axios
@@ -113,8 +113,8 @@ export const setAddJob = async (getdata) => {
         availability: getdata.availability,
         start_date: getdata.start_date,
         description: getdata.description,
-
-
+        hours_time_name: getdata.hours_time_name,
+        skillset_type_name: getdata.skillset_type_name
       })
       .then(async response => {
         if (response.status === 200) {

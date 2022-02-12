@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 import profile_pic_clinic from "./../../images/clinic_profile.png";
 import {getNotification} from '../FilterService'
 class Header extends Component {

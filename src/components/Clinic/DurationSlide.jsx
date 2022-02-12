@@ -47,41 +47,65 @@ function NameSlide({
   const [availability, setAvailability] = useState(availabilityValue);
 
   const [selectedWorkSituatuon,setselectedWorkSituatuon] = useState(getValues('contract_type_id') ? getValues('contract_type_id') : []);
+  const [selectedWorkSituatuonName,setselectedWorkSituatuonName] = useState(getValues('contract_type_name') ? getValues('contract_type_name') : []);
   const [selectedWorkTime,setselectedWorkTime] = useState(getValues('hours_time') ? getValues('hours_time') : []);
+  const [selectedWorkTimeName,setselectedWorkTimeName] = useState(getValues('hours_time_name') ? getValues('hours_time_name') : []);
   
-  const handleSelectSkill = (e) =>{
+  const handleSelectSkill = (e,selectedName) =>{
     let selectedValue = selectedWorkSituatuon;
-    console.log('event.target.checked;',e.target.checked)
-    console.log('event.target.value',e.target.value)
+    let selectedValueName = selectedWorkSituatuonName;
     if(e.target.checked){
       selectedValue.push(e.target.value)
       setselectedWorkSituatuon([...selectedValue])
       setValue('contract_type_id',selectedValue)
+
+      // name
+      selectedValueName.push(selectedName)
+      setselectedWorkSituatuonName([...selectedValueName])
+      setValue('contract_type_name',selectedValueName)
     }else{
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectedName);
       if (index > -1) {
         selectedValue.splice(index, 1);
         setselectedWorkSituatuon([...selectedValue])
         setValue('contract_type_id',selectedValue)
+      }
 
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setselectedWorkSituatuonName([...selectedValueName])
+        setValue('contract_type_name',selectedValueName)
       }
     }
   }
-  const handleSelectTime = (e) =>{
+  const handleSelectTime = (e,selectedTimeName) =>{
     let selectedValue = selectedWorkTime;
-    console.log('event.target.checked;',e.target.checked)
-    console.log('event.target.value',e.target.value)
+    let selectedValueName = selectedWorkTimeName;
     if(e.target.checked){
       selectedValue.push(e.target.value)
       setselectedWorkTime([...selectedValue])
       setValue('hours_time',selectedValue)
+
+      // name
+      selectedValueName.push(selectedTimeName)
+      setselectedWorkTimeName([...selectedValueName])
+      setValue('hours_time_name',selectedValueName)
     }else{
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectedTimeName);
       if (index > -1) {
         selectedValue.splice(index, 1);
         setselectedWorkTime([...selectedValue])
         setValue('hours_time',selectedValue)
+      }
 
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setselectedWorkTimeName([...selectedValueName])
+        setValue('hours_time_name',selectedValueName)
       }
     }
   }
@@ -140,7 +164,7 @@ function NameSlide({
                         {...register("contract_type_id")}
                         hidden
                         value={situation.id}
-                        onChange={(e)=>{handleSelectSkill(e)}}
+                        onChange={(e)=>{handleSelectSkill(e,situation.title)}}
                       />
                       {situation.title}
                     </label>
@@ -160,7 +184,7 @@ function NameSlide({
                       <input
                         type="checkbox"
                         {...register("hours_time")}
-                        onChange={(e)=>{handleSelectTime(e)}}
+                        onChange={(e)=>{handleSelectTime(e,ave.title)}}
                         hidden
                         value={ave.id}
                       />

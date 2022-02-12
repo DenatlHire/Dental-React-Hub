@@ -9,7 +9,7 @@ import GooglePlacesAutocomplete, {
 } from "react-google-places-autocomplete";
 import {getProfileFilter,clinicVisitPage,clinicSaveProfile} from '../FilterService'
 import {getSkills} from '../Service';
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 export default function FindProfile() {
@@ -233,7 +233,7 @@ export default function FindProfile() {
     <div>
        <div className="search_result_wrap">
 
-            <div className="container t_search">
+            {/* <div className="container t_search">
             <div class="baner-search-box banner-search-job p-6">
             <form  onSubmit={(e)=>{filterQuery(e)}}>
               <div class="row align-items-center">
@@ -327,7 +327,7 @@ export default function FindProfile() {
               </div>
               </form>
             </div>
-            </div>
+            </div> */}
 
           <div className="container">
 

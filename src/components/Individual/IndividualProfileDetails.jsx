@@ -9,7 +9,7 @@ import GooglePlacesAutocomplete, {
 } from "react-google-places-autocomplete";
 import moment from "moment";
 import { useForm, Controller } from "react-hook-form";
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 import background_pic from "./../../images/profile_banner.png";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";

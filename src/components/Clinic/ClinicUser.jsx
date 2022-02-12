@@ -143,13 +143,23 @@ export default function ClinicUser(props) {
 
   // validations end
 
+  
   const [selectSkill, setSelectSkill] = useState(
     data?.skillset_type_id ? data?.skillset_type_id : []
+  );
+
+  const [selectSkillName, setSelectSkillName] = useState(
+    data?.skillset_type_name ? data?.skillset_type_name : []
   );
 
   const [selectedworkSituatuon, setSelectedworkSituatuon] = useState(
     data?.contract_type_id ? data?.contract_type_id : []
   );
+
+  const [selectedworkSituatuonName, setSelectedworkSituatuonName] = useState(
+    data?.contract_type_name ? data.contract_type_name : []
+  );
+
 
   const handleUserInput = e => {
     console.log("data", e.target.name, e.target.value);
@@ -254,9 +264,6 @@ export default function ClinicUser(props) {
   }, []);
 
   const submit = e => {
-    // e.preventDefault();
-
-    console.log("userinfo", usetInfo);
     axios
       .put("users/" + data.user_id.id, {
         clinicname: usetInfo.clinicname
@@ -274,7 +281,6 @@ export default function ClinicUser(props) {
         console.log("An error occurred:", error.response);
       });
 
-    console.log("putdata", data, usetInfo);
     axios
       .put("user-informations/" + data.id, {
         // user_id: userinfo.id,
@@ -290,8 +296,11 @@ export default function ClinicUser(props) {
         designation_id: usetInfo.designation_id,
         practice_type: usetInfo.practice_type,
         contract_type_id: selectedworkSituatuon.join(),
+        contract_type_name: selectedworkSituatuonName.join(),
         hours_time: selectedhourTime.join(),
+        hours_time_name: selectedhourTimeName.join(),
         skillset_type_id: selectSkill.join(),
+        skillset_type_name: selectSkillName.join(),
         office_type_id: selectedOfficeType.join()
       })
       .then(response => {
@@ -424,21 +433,36 @@ export default function ClinicUser(props) {
     data?.hours_time ? data?.hours_time : []
   );
 
-  const handleSelectTime = e => {
+  const [selectedhourTimeName, setSelectedhourTimeName] = useState(
+    data?.hours_time_name ? data.hours_time_name : []
+  );
+
+  const handleSelectTime = (e,selectName)=> {
     let selectedValue = selectedhourTime;
-    console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectedhourTimeName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
       setSelectedhourTime([...selectedValue]);
       setValue("hours_time", selectedValue);
+
+      // name
+      selectedValueName.push(selectName);
+      setSelectedhourTimeName([...selectedValueName]);
+      setValue("hours_time_name", selectedValueName);
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log("event.target.value", selectedValue.splice(index, 1));
         setSelectedhourTime([...selectedValue]);
         setValue("hours_time", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectedhourTimeName([...selectedValueName]);
+        setValue("hours_time_name", selectedValueName);
       }
     }
   };
@@ -520,44 +544,63 @@ export default function ClinicUser(props) {
     }
   };
 
-  const handleSelectSituation = e => {
+  const handleSelectSituation = (e,selectName) => {
     let selectedValue = selectedworkSituatuon;
-    console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectedworkSituatuonName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
       setSelectedworkSituatuon([...selectedValue]);
       setValue("contract_type_id", selectedValue);
+
+      // name
+      selectedValueName.push(selectName);
+      setSelectedworkSituatuonName([...selectedValueName]);
+      setValue("contract_type_name", selectedValueName);
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectName);
 
       if (index > -1) {
-        console.log("index", index);
         selectedValue.splice(index, 1);
-        console.log("event.target.value.selectedValue", selectedValue);
         setSelectedworkSituatuon([...selectedValue]);
-        console.log("selectedValueppppp", selectedValue);
         setValue("contract_type_id", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectedworkSituatuonName([...selectedValueName]);
+        setValue("contract_type_name", selectedValueName);
       }
     }
   };
 
-  const handleSelectSkill = e => {
+  const handleSelectSkill = (e,selectName) => {
     let selectedValue = selectSkill;
-    console.log("event.target.checked;", selectedValue);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectSkillName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
-      console.log("selectSkill", selectedValue);
       setSelectSkill([...selectedValue]);
       setValue("skillset_type_id", selectedValue);
+
+      // name
+      selectedValueName.push(selectName);
+      setSelectSkillName([...selectedValueName]);
+      setValue("skillset_type_name", selectedValueName);
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log("event.target.value", selectedValue.splice(index, 1));
         setSelectSkill([...selectedValue]);
         setValue("skillset_type_id", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectSkillName([...selectedValueName]);
+        setValue("skillset_type_name", selectedValueName);
       }
     }
   };
@@ -1591,10 +1634,6 @@ export default function ClinicUser(props) {
                                               {selectedOption ?
                                               <>
                                               <ul>
-                                                {console.log(
-                                                  "selectSkill",
-                                                  selectSkill
-                                                )}
                                                 {skill.map((skill, i) => (
                                                   <li
                                                     className={`${
@@ -1616,7 +1655,7 @@ export default function ClinicUser(props) {
                                                           "skillset_type_id"
                                                         )}
                                                         onChange={e => {
-                                                          handleSelectSkill(e);
+                                                          handleSelectSkill(e,skill.title);
                                                         }}
                                                         checked={
                                                           selectSkill &&
@@ -1713,7 +1752,7 @@ export default function ClinicUser(props) {
                                                           value={situation.id}
                                                           onChange={e => {
                                                             handleSelectSituation(
-                                                              e
+                                                              e,situation.title
                                                             );
                                                           }}
                                                           checked={
@@ -1765,7 +1804,7 @@ export default function ClinicUser(props) {
                                                           "hours_time"
                                                         )}
                                                         onChange={e => {
-                                                          handleSelectTime(e);
+                                                          handleSelectTime(e,ave.title);
                                                         }}
                                                         hidden
                                                         value={ave.id}

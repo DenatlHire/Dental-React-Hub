@@ -180,11 +180,17 @@ class Footer extends Component {
                                             Jobs
                                         </Link>
                                     </li>)}
+                                    
                                     <li className="d-inline-block mx-2">
                                         <Link to="/contact" className="f_in_links">
                                             Contact
                                         </Link>
                                     </li>
+                                    {isAuthenticated && userinfo.type == '2' && (<li className="d-inline-block mx-2">
+                                    <Link className="nav-link" to={  '/searchProfile'} aria-haspopup="true" aria-expanded="false">
+                                            Profiles
+                                        </Link>
+                                    </li>)}
                                 </ul>
                             </div>
 

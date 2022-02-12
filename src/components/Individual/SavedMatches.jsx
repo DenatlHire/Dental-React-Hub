@@ -9,7 +9,7 @@ import GooglePlacesAutocomplete, {
 } from "react-google-places-autocomplete";
 import {getClinicSavedProfile} from '../FilterService'
 import {getSkills} from '../Service';
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 
 export default function SavedMatches() {
   const user = JSON.parse(localStorage.getItem("user"));

@@ -11,7 +11,7 @@ import GooglePlacesAutocomplete, {
 import moment from "moment";
 import { useForm, Controller } from "react-hook-form";
 import { responsiveFontSizes } from "@mui/material";
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 import background_pic from "./../../images/profile_banner.png";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -261,7 +261,7 @@ function IndividualUser(props) {
         );
       })
       .catch(error => {
-        console.log("data", error);
+        console.log("error", error);
       });
   }, []);
 
@@ -348,7 +348,6 @@ function IndividualUser(props) {
         // Handle error.
         console.log("An error occurred:", error.response);
       });
-    // alert(usetInfo.designation_id)
     // console.log(   "okokok" ,data?.designation_id?.id +'=='+ usetInfo.designation_id)
     axios
       .put("user-informations/" + data.id, {
@@ -365,8 +364,11 @@ function IndividualUser(props) {
         designation_id: usetInfo.designation_id,
         office_type_id: selectedOfficeType.join(),
         contract_type_id: selectedworkSituatuon.join(),
+        contract_type_name: selectedWorkSituatuonName.join(),
         hours_time: selectedhourTime.join(),
-        skillset_type_id: (data?.designation_id?.id == usetInfo.designation_id || data?.designation_id?.id == usetInfo.designation_id.id ) ? selectSkill.join() : ''
+        hours_time_name: selectedhourTimeName.join(),
+        skillset_type_id: (data?.designation_id?.id == usetInfo.designation_id || data?.designation_id?.id == usetInfo.designation_id.id ) ? selectSkill.join() : '',
+        skillset_type_name: selectSkillName.join()
       })
       .then(response => {
         // Handle success.
@@ -720,6 +722,7 @@ function IndividualUser(props) {
   const [selectedworkSituatuon, setSelectedworkSituatuon] = useState(
     data?.contract_type_id ? data?.contract_type_id : []
   );
+  const [selectedWorkSituatuonName,setselectedWorkSituatuonName] = useState(data?.contract_type_name ? data?.contract_type_name : []);
 
   const [selectedOfficeType, setSelectedOfficeType] = useState(
     data?.office_type_id ? data?.office_type_id : []
@@ -729,27 +732,44 @@ function IndividualUser(props) {
     data?.hours_time ? data?.hours_time : []
   );
 
+  const [selectedhourTimeName, setSelectedhourTimeName] = useState(
+    data?.hours_time_name ? data?.hours_time_name : []
+  );
+
   const [selectSkill, setSelectSkill] = useState(
     data && data.skillset_type_id ? data.skillset_type_id : []
   );
 
-  const handleSelectSkill = e => {
+  const [selectSkillName, setSelectSkillName] = useState(
+    data && data.skillset_type_name ? data.skillset_type_name : []
+  );
+
+  const handleSelectSkill = (e,skillName) => {
     let selectedValue = selectSkill;
-    console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectSkillName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
-      console.log("selectSkill", selectedValue);
       setSelectSkill([...selectedValue]);
       setValue("skillset_type_id", selectedValue);
+
+      // name
+      selectedValueName.push(skillName);
+      setSelectSkillName([...selectedValueName]);
+      setValue("skillset_type_name", selectedValueName);
     } else {
       const index = selectedValue.indexOf(e.target.value);
-      // alert(index)
+      const indexName = selectedValueName.indexOf(skillName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log("event.target.value", selectedValue);
         setSelectSkill([...selectedValue]);
         setValue("skillset_type_id", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectSkillName([...selectedValueName]);
+        setValue("skillset_type_name", selectedValueName);
       }
     }
   };
@@ -802,41 +822,67 @@ function IndividualUser(props) {
     // }
   };
 
-  const handleSelectSituation = e => {
+  const handleSelectSituation = (e,situationName) => {
     let selectedValue = selectedworkSituatuon;
+    let selectedValueName = selectedWorkSituatuonName;
     console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value);
+    console.log("event.target.value", e.target.value,);
     if (e.target.checked) {
       selectedValue.push(e.target.value);
       setSelectedworkSituatuon([...selectedValue]);
       setValue("contract_type_id", selectedValue);
+
+      // name
+      selectedValueName.push(situationName);
+      setselectedWorkSituatuonName([...selectedValueName]);
+      setValue("contract_type_name", selectedValueName);
+      
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(situationName);
       if (index > -1) {
         selectedValue.splice(index, 1);
         console.log("event.target.value", selectedValue);
         setValue("contract_type_id", selectedValue);
         setSelectedworkSituatuon([...selectedValue]);
       }
+
+      // name
+       if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setValue("contract_type_name", selectedValueName);
+        setselectedWorkSituatuonName([...selectedValueName]);
+      }
     }
   };
 
-  const handleSelectTime = e => {
+  const handleSelectTime = (e,selectTimeName) => {
     let selectedValue = selectedhourTime;
-    console.log("event.target.checked;", e.target.checked);
-    console.log("event.target.value", e.target.value);
+    let selectedValueName = selectedhourTimeName;
     if (e.target.checked) {
       selectedValue.push(e.target.value);
-      console.log('selectedValue',selectedValue)
       setSelectedhourTime([...selectedValue]);
       setValue("hours_time", selectedValue);
+
+      // name
+      selectedValueName.push(selectTimeName);
+      setSelectedhourTimeName([...selectedValueName]);
+      setValue("hours_time_name", selectedValueName);
+
     } else {
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedValueName.indexOf(selectTimeName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log("event.target.value", selectedValue);
         setSelectedhourTime([...selectedValue]);
         setValue("hours_time", selectedValue);
+      }
+
+      // name
+      if (indexName > -1) {
+        selectedValueName.splice(indexName, 1);
+        setSelectedhourTimeName([...selectedValueName]);
+        setValue("hours_time_name", selectedValueName);
       }
     }
   };
@@ -2129,7 +2175,7 @@ function IndividualUser(props) {
                                           value={skill.id}
                                           // {...register("skillset_type_id")}
                                           onChange={e => {
-                                            handleSelectSkill(e);
+                                            handleSelectSkill(e,skill.title);
                                           }}
                                           checked={`${
                                             selectSkill &&
@@ -2360,7 +2406,7 @@ function IndividualUser(props) {
                                                       value={situation.id}
                                                       onChange={e => {
                                                         handleSelectSituation(
-                                                          e
+                                                          e,situation.title
                                                         );
                                                       }}
                                                       checked={
@@ -2448,7 +2494,7 @@ function IndividualUser(props) {
                                                   type="checkbox"
                                                   // {...register("hours_time")}
                                                   onChange={e => {
-                                                    handleSelectTime(e);
+                                                    handleSelectTime(e,ave.title);
                                                   }}
                                                   hidden
                                                   value={ave.id}

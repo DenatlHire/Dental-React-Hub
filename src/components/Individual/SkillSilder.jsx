@@ -44,7 +44,8 @@ function SkillSilder({
 
   const [skill, setSkill] = useState([]);
   const [selectSkill, setSelectSkill] = useState(getValues('skillset_type_id') ? getValues('skillset_type_id') : []);
-  
+  const [selectSkillName, setSelectSkillName] = useState(getValues('skillset_type_name') ? getValues('skillset_type_name') : []);
+
   const getSkills = () => {
     axios
     .get("/skillset-types",{params: {
@@ -61,29 +62,38 @@ function SkillSilder({
   useEffect(() => {
     getSkills()
   }, [])
-  const handleSelectSkill = (e) =>{
+  const handleSelectSkill = (e,skillName) =>{
     let selectedValue = selectSkill;
-    console.log('event.target.checked;',e.target.checked)
-    console.log('event.target.value',e.target.value)
+    let selectedName = selectSkillName;
+    console.log('event.target.value',skillName)
     if(e.target.checked){
       selectedValue.push(e.target.value)
-      console.log('selectSkill',selectedValue)
       setSelectSkill([...selectedValue])
       setValue('skillset_type_id',selectedValue)
+
+      // name
+      selectedName.push(skillName)
+      setSelectSkillName([...selectedName])
+      setValue('skillset_type_name',selectedName)
     }else{
       const index = selectedValue.indexOf(e.target.value);
+      const indexName = selectedName.indexOf(skillName);
       if (index > -1) {
         selectedValue.splice(index, 1);
-        console.log('selectSkill',selectedValue)
         setSelectSkill([...selectedValue])
         setValue('skillset_type_id',selectedValue)
+      }
 
+      // name
+      if (indexName > -1) {
+        selectedName.splice(index, 1);
+        setSelectSkillName([...selectedName])
+        setValue('skillset_type_name',selectedName)
       }
     }
   }
   return (
     <div className="item_main">
-    {console.log("skill",skill)}
       <div className="item_in_info">
         <div className="item_left_info">
           <div className="item_logo">
@@ -107,7 +117,7 @@ function SkillSilder({
                       // .indexOf(skill.id) > -1 ? 'active' : ''
                       <li className={`${selectSkill.find(element => element == skill.id) ? 'active' : ''}`}>
                       <label>
-                        <input type="checkbox" {...register("skillset_type_id")} hidden value={skill.id} onChange={(e)=>{handleSelectSkill(e)}}  />
+                        <input type="checkbox" {...register("skillset_type_id")} hidden value={skill.id} onChange={(e)=>{handleSelectSkill(e,skill.title)}}  />
                         {skill.title}
                       </label>
                     </li> 

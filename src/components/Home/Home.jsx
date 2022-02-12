@@ -7,7 +7,7 @@ import {getSkills} from '../Service';
 import axios from 'axios';
 import { Link, Redirect } from "react-router-dom";
 import {getClinicFilter,individualVisitPage,individualSaveJob} from '../FilterService'
-import profile_pic from "./../../images/avatar.jpeg";
+import profile_pic from "./../../images/avatar.jpg";
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 
