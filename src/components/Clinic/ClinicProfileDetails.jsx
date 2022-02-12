@@ -240,7 +240,10 @@ export default function ClinicProfileDetails(props) {
                 className="in_user_top"
                 style={{ backgroundImage: `url("${banner_file}")` }}
               >
-              <a class="msg-btn" href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a>
+              <a class="msg-btn" href={`/messaging/?recipient=${
+                // TODO: user_id
+                '6'
+              }`} title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a>
                 {/* <div class="saved_icon">  </div> */}
                 
 

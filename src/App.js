@@ -1,6 +1,7 @@
 // import logo from './logo.svg';
 // import './App.css';
 // import ReactDOM from 'react-dom';
+import './App.Messaging.css';
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,6 +9,8 @@ import {
   Route
   //useParams
 } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 import Home from "./components/Home/Home";
 import HomeNew from "./components/Home/HomeNew";
 import About from "./components/About/About";
@@ -16,6 +19,7 @@ import Signup from "./components/Signup/Signup";
 import Forgotpassword from "./components/Forgotpassword/Forgotpassword";
 import Reset from "./components/Reset/Reset";
 import Jobs from "./components/Jobs/Jobs";
+import Messaging from './components/Messaging/Messaging';
 import Contact from "./components/Contact/Contact";
 import Blogsin from "./components/Blogsin/Blogsin";
 import Blogdetail from "./components/Blogdetail/Blogdetail";
@@ -48,6 +52,7 @@ import UpdateJob from "./components/MyJobs/EditJob";
 import Header from "./components/includes/Header";
 import Footer from "./components/includes/Footer";
 
+const queryClient = new QueryClient()
 
 // function Welcome(props) {
 //     const {slug}  = useParams();
@@ -58,27 +63,29 @@ function App() {
   const isAuthenticated = localStorage.getItem("token");
   const userType = JSON.parse(localStorage.getItem("user"));
 
-  return isAuthenticated ? (
-    <div className="App">
-      {/* {console.log("userapp", userType.type)} */}
-      <Router>
-        <ScrollToTop />
+  return (
+    <QueryClientProvider client={queryClient}>
+      {isAuthenticated ? (
+        <div className="App">
+          {/* {console.log("userapp", userType.type)} */}
+          <Router>
+            <ScrollToTop />
 
-        <Route
-          path="/"
-          render={props =>
-            props.location.pathname !== "/signupprofile" &&
-            props.location.pathname !== "/individual" &&
-            props.location.pathname !== "/clinic" &&
-            props.location.pathname !== "/register" &&
-            props.location.pathname !== "/clinicregister" && <Header />
-          }
-        ></Route>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/about">
-            <About />
-          </Route>
+            <Route
+              path="/"
+              render={props =>
+                props.location.pathname !== "/signupprofile" &&
+                props.location.pathname !== "/individual" &&
+                props.location.pathname !== "/clinic" &&
+                props.location.pathname !== "/register" &&
+                props.location.pathname !== "/clinicregister" && <Header />
+              }
+            ></Route>
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route path="/about">
+                <About />
+              </Route>
 
           <Route path="/jobs">
             <Jobs />
@@ -124,220 +131,225 @@ function App() {
             </Route>
           )}
 
-          <Route path="/news">
-            <Home />
-          </Route>
-          <Route path="/blogs">
-            <Blogsin />
-          </Route>
-          <Route path="/signin">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/signup">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/forgotpassword">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/reset">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/changepassword">
-            <ChangePassword />
-          </Route>
-          <Route path="/contact">
-            <Contact />
-          </Route>
-          <Route path="/blogdetail">
-            <Blogdetail />
-          </Route>
-          <Route path="/blog/:slug">
-            <Blogdetail />
-          </Route>
-          <Route path="/testimonials">
-            <Testimonialin />
-          </Route>
-          <Route path="/privacy">
-            <Privacy />
-          </Route>
-          <Route path="/terms">
-            <Terms />
-          </Route>
-          <Route path="/notfound">
-            <Notfound />
-          </Route>
-          {/* <Route path="/myprofile">
-                        <IndividualProfile />
-                    </Route> */}
-          <Route path="/profileoverlay">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/signupprofile">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/individual">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/clinic">
-            <Redirect to="/" push={true} />
-          </Route>
-          <Route path="/register">
-            <Redirect to="/" push={true} />
-          </Route>
+              <Route path="/news">
+                <Home />
+              </Route>
+              <Route path="/blogs">
+                <Blogsin />
+              </Route>
+              <Route path="/signin">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/signup">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/forgotpassword">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/reset">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/changepassword">
+                <ChangePassword />
+              </Route>
+              <Route path="/contact">
+                <Contact />
+              </Route>
+              <Route path="/messaging/:id?">
+                <Messaging />
+              </Route>
+              <Route path="/blogdetail">
+                <Blogdetail />
+              </Route>
+              <Route path="/blog/:slug">
+                <Blogdetail />
+              </Route>
+              <Route path="/testimonials">
+                <Testimonialin />
+              </Route>
+              <Route path="/privacy">
+                <Privacy />
+              </Route>
+              <Route path="/terms">
+                <Terms />
+              </Route>
+              <Route path="/notfound">
+                <Notfound />
+              </Route>
+              {/* <Route path="/myprofile">
+                            <IndividualProfile />
+                        </Route> */}
+              <Route path="/profileoverlay">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/signupprofile">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/individual">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/clinic">
+                <Redirect to="/" push={true} />
+              </Route>
+              <Route path="/register">
+                <Redirect to="/" push={true} />
+              </Route>
 
-          <Route path="/clinicregister">
-            <Redirect to="/" push={true} />
-          </Route>
+              <Route path="/clinicregister">
+                <Redirect to="/" push={true} />
+              </Route>
 
-          <Route path="/myprofile">
-            <IndividualUser />
-          </Route>
-          <Route path="/clinicprofile">
-            <ClinicUser />
-          </Route>
+              <Route path="/myprofile">
+                <IndividualUser />
+              </Route>
+              <Route path="/clinicprofile">
+                <ClinicUser />
+              </Route>
 
-          <Route path="/searchresult">
-            <SearchResult />
-          </Route>
-          <Route path="/findProfile">
-            <FindProfile />
-          </Route>
-           
+              <Route path="/searchresult">
+                <SearchResult />
+              </Route>
+              <Route path="/findProfile">
+                <FindProfile />
+              </Route>
+              
+              
+
+              <Route path="/notification">
+                <Notification />
+              </Route>
+              <Route path="/about">
+                <About />
+              </Route>
+              <Route path="/jobs">
+                <Jobs />
+              </Route>
+              <Route path="/news">
+                <Home />
+              </Route>
+              <Route path="/blogs">
+                <Blogsin />
+              </Route>
+              <Route path="/contact">
+                <Contact />
+              </Route>
+              <Route path="/blogdetail">
+                <Blogdetail />
+              </Route>
+              <Route path="/blog/:slug">
+                <Blogdetail />
+              </Route>
+              <Route path="/testimonials">
+                <Testimonialin />
+              </Route>
+              <Route path="/savedmatches">
+                <SavedMatches />
+              </Route>
+
+              <Route path="/notification">
+                <Notification />
+              </Route>
+            </Switch>
+            <Route
+              path="/"
+              render={props =>
+                props.location.pathname !== "/signupprofile" &&
+                props.location.pathname !== "/individual" &&
+                props.location.pathname !== "/clinic" &&
+                props.location.pathname !== "/register" &&
+                props.location.pathname !== "/clinicregister" && <Footer />
+              }
+            ></Route>
+          </Router>
+        </div>
+      ) : (
+        <div className="App">
+          <Router>
+            <ScrollToTop />
+
+            <Route
+              path="/"
+              render={props =>
+                props.location.pathname !== "/signupprofile" &&
+                props.location.pathname !== "/individual" &&
+                props.location.pathname !== "/clinic" &&
+                props.location.pathname !== "/register" &&
+                props.location.pathname !== "/clinicregister" && <Header />
+              }
+            ></Route>
+            <Switch>
+              <Route exact path="/" component={HomeNew} />
+              <Route path="/signin">
+                <Signin />
+              </Route>
+              <Route path="/signup">
+                <Signup />
+              </Route>
+              <Route path="/forgotpassword">
+                <Forgotpassword />
+              </Route>
+              <Route path="/reset">
+                <Reset />
+              </Route>
+              <Route path="/changepassword">
+                <Redirect to="/signup" push={true} />
+              </Route>
           
+            
+              <Route path="/privacy">
+                <Privacy />
+              </Route>
+              <Route path="/terms">
+                <Terms />
+              </Route>
+              <Route path="/notfound">
+                <Notfound />
+              </Route>
+              {/* <Route path="/myprofile">
+                            <Home />
+                        </Route> */}
+              <Route path="/profileoverlay">
+                <ProfileOverlay />
+              </Route>
+              <Route path="/signupprofile">
+                <LoginProfile />
+              </Route>
+              <Route path="/individual">
+                <Individual />
+              </Route>
+              <Route path="/clinic">
+                <Clinic />
+              </Route>
+              <Route path="/register">
+                <IndividualInfoslide />
+              </Route>
+              <Route path="/clinicregister">
+                <ClinicInfoslide />
+              </Route>
+              {/* <Route path="/myprofile">
+                            <IndividualUser />
+                        </Route> */}
+              {/* <Route path="/clinicprofile">
+                            <ClinicUser />
+                        </Route> */}
+            
 
-          <Route path="/notification">
-            <Notification />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/jobs">
-            <Jobs />
-          </Route>
-          <Route path="/news">
-            <Home />
-          </Route>
-          <Route path="/blogs">
-            <Blogsin />
-          </Route>
-          <Route path="/contact">
-            <Contact />
-          </Route>
-          <Route path="/blogdetail">
-            <Blogdetail />
-          </Route>
-          <Route path="/blog/:slug">
-            <Blogdetail />
-          </Route>
-          <Route path="/testimonials">
-            <Testimonialin />
-          </Route>
-          <Route path="/savedmatches">
-            <SavedMatches />
-          </Route>
-
-          <Route path="/notification">
-            <Notification />
-          </Route>
-        </Switch>
-        <Route
-          path="/"
-          render={props =>
-            props.location.pathname !== "/signupprofile" &&
-            props.location.pathname !== "/individual" &&
-            props.location.pathname !== "/clinic" &&
-            props.location.pathname !== "/register" &&
-            props.location.pathname !== "/clinicregister" && <Footer />
-          }
-        ></Route>
-      </Router>
-    </div>
-  ) : (
-    <div className="App">
-      <Router>
-        <ScrollToTop />
-
-        <Route
-          path="/"
-          render={props =>
-            props.location.pathname !== "/signupprofile" &&
-            props.location.pathname !== "/individual" &&
-            props.location.pathname !== "/clinic" &&
-            props.location.pathname !== "/register" &&
-            props.location.pathname !== "/clinicregister" && <Header />
-          }
-        ></Route>
-        <Switch>
-          <Route exact path="/" component={HomeNew} />
-          <Route path="/signin">
-            <Signin />
-          </Route>
-          <Route path="/signup">
-            <Signup />
-          </Route>
-          <Route path="/forgotpassword">
-            <Forgotpassword />
-          </Route>
-          <Route path="/reset">
-            <Reset />
-          </Route>
-          <Route path="/changepassword">
-            <Redirect to="/signup" push={true} />
-          </Route>
-      
-         
-          <Route path="/privacy">
-            <Privacy />
-          </Route>
-          <Route path="/terms">
-            <Terms />
-          </Route>
-          <Route path="/notfound">
-            <Notfound />
-          </Route>
-          {/* <Route path="/myprofile">
-                        <Home />
-                    </Route> */}
-          <Route path="/profileoverlay">
-            <ProfileOverlay />
-          </Route>
-          <Route path="/signupprofile">
-            <LoginProfile />
-          </Route>
-          <Route path="/individual">
-            <Individual />
-          </Route>
-          <Route path="/clinic">
-            <Clinic />
-          </Route>
-          <Route path="/register">
-            <IndividualInfoslide />
-          </Route>
-          <Route path="/clinicregister">
-            <ClinicInfoslide />
-          </Route>
-          {/* <Route path="/myprofile">
-                        <IndividualUser />
-                    </Route> */}
-          {/* <Route path="/clinicprofile">
-                        <ClinicUser />
-                    </Route> */}
-         
-
-        </Switch>
-        <Route
-          path="/"
-          render={props =>
-            props.location.pathname !== "/signupprofile" &&
-            props.location.pathname !== "/individual" &&
-            props.location.pathname !== "/clinic" &&
-            props.location.pathname !== "/register" &&
-            props.location.pathname !== "/clinicregister" && <Footer />
-          }
-        ></Route>
-      </Router>
-    </div>
-  );
+            </Switch>
+            <Route
+              path="/"
+              render={props =>
+                props.location.pathname !== "/signupprofile" &&
+                props.location.pathname !== "/individual" &&
+                props.location.pathname !== "/clinic" &&
+                props.location.pathname !== "/register" &&
+                props.location.pathname !== "/clinicregister" && <Footer />
+              }
+            ></Route>
+          </Router>
+        </div>
+      )}
+    </QueryClientProvider>
+  )
 }
 
 export default App;

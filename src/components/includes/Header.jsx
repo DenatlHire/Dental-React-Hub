@@ -3,7 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
 import profile_pic from "./../../images/avatar.jpg";
 import profile_pic_clinic from "./../../images/clinic_profile.png";
-import {getNotification} from '../FilterService'
+import { getNotification } from '../FilterService'
 class Header extends Component {
    logout = () => {
       localStorage.clear();
@@ -11,33 +11,33 @@ class Header extends Component {
    }
    constructor(props) {
       super(props);
-      this.state = {notification: 0};
+      this.state = { notification: 0 };
    }
-   componentDidMount(){
+   componentDidMount() {
       this.getNotificationCount()
       setInterval(() => {
 
          this.getNotificationCount()
       }, 5000);
    }
-   getNotificationCount(){
+   getNotificationCount() {
       const userinfo = JSON.parse(localStorage.getItem('user'));
-      if(localStorage.getItem('user') ){
-         getNotification().then(res=>{
-            if('data' in res){
-                let length = res.data.filter(function(item){
-                   return item.is_read != 1;
-                 }).length;
-                 console.log('length==>',length)
-                 this.setState({notification : length})
-             }else{
+      if (localStorage.getItem('user')) {
+         getNotification().then(res => {
+            if ('data' in res) {
+               let length = res.data.filter(function (item) {
+                  return item.is_read != 1;
+               }).length;
+               console.log('length==>', length)
+               this.setState({ notification: length })
+            } else {
                console.log('length==>')
-                this.setState({notification : 0})
-             
-             }
-           });
+               this.setState({ notification: 0 })
+
+            }
+         });
       }
-      
+
    }
    render() {
       console.log('23')
@@ -56,13 +56,13 @@ class Header extends Component {
          <header className="App-header">
             <nav className="navbar navbar-expand-lg navbar-light pt-5">
                <div className="container">
-               <Link className="navbar-brand" to="/">
-                        <img src="/assets/img/brands/logo.png" className="navbar-brand-img" alt="..." />
-                     </Link>
-               {isAuthenticated ? (
-                  <><button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                           <span className="navbar-toggler-icon"></span>
-                        </button><div className="collapse navbar-collapse" id="navbarCollapse">
+                  <Link className="navbar-brand" to="/">
+                     <img src="/assets/img/brands/logo.png" className="navbar-brand-img" alt="..." />
+                  </Link>
+                  {isAuthenticated ? (
+                     <><button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                     </button><div className="collapse navbar-collapse" id="navbarCollapse">
                            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                               <i className="fe fe-x"></i>
                            </button>
@@ -80,7 +80,7 @@ class Header extends Component {
                                     Blogs</Link>
                               </li> */}
                               <li className="nav-item">
-                                 <Link className="nav-link" to={ userinfo.type == '2' ? '/findProfile' : '/searchresult'} aria-haspopup="true" aria-expanded="false">
+                                 <Link className="nav-link" to={userinfo.type == '2' ? '/findProfile' : '/searchresult'} aria-haspopup="true" aria-expanded="false">
                                     Search Jobs</Link>
                               </li>
                               {/* <li className="nav-item">
@@ -94,17 +94,19 @@ class Header extends Component {
                               <div className='add_job_btn'>
                                  {userinfo && userinfo.type == '2' ?
                                     <Link to={'/createjob'}>Add a Job</Link> : ""}
-                                 <Link className="ad_btn active" to={ userinfo.type == '2' ? '/savedmatches' : '/savedjob'} >Saved Matches</Link>
+                                 <Link className="ad_btn active" to={userinfo.type == '2' ? '/savedmatches' : '/savedjob'} >Saved Matches</Link>
                               </div>
 
                               <div className="noti_btn">
                                  <Link className="n_icon" to="/notification"><i class="fa fa-bell" aria-hidden="true"></i>
-                                 {this.state.notification > 0 &&<span>{this.state.notification}</span>}
+                                    {this.state.notification > 0 && <span>{this.state.notification}</span>}
                                  </Link>
-                                 <Link className="n_icon" to="/#"><i class="fa fa-envelope" aria-hidden="true"></i>
+                                 <Link className="n_icon" to="/messaging"><i class="fa fa-envelope" aria-hidden="true"></i>
                                     <span>5</span>
                                  </Link>
                               </div>
+
+
 
                               <div className="dropdown user-profile-dropdown">
                                  <div className="dropdown-toggle font-weight-bold nav-link" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -139,9 +141,9 @@ class Header extends Component {
                   ) : (
                      <div className="sign_btn">
                         <Link className="login_link" title='Log In' to="/signin">
-                        <img src="/assets/img/brands/can_flag.svg" className="flag_img" alt="..." /> Log In</Link>
+                           <img src="/assets/img/brands/can_flag.svg" className="flag_img" alt="..." /> Log In</Link>
                         <Link className="navbar-btn theme_btn_default ms-auto" to="/signupprofile">
-                        Sign Up for Free</Link> </div>
+                           Sign Up for Free</Link> </div>
                   )}
                </div>
             </nav>
