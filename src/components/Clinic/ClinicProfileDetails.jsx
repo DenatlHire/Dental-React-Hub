@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, Redirect,useParams } from "react-router-dom";
+import { Link, Redirect, useParams } from "react-router-dom";
 import nl2br from "react-newline-to-break";
 import axios from "axios";
 
@@ -37,8 +37,8 @@ export default function ClinicProfileDetails(props) {
     getDesignation().then(res => {
       setDesignations(res);
     });
-      getSkills();
-      getSkillsSelected();
+    getSkills();
+    getSkillsSelected();
     getWorkSituation().then(res => {
       setWorkSituatuon(res);
     });
@@ -54,24 +54,26 @@ export default function ClinicProfileDetails(props) {
   // get skills
   const getSkillsSelected = () => {
     axios
-    .get("/skillset-types").then(response => {
+      .get("/skillset-types").then(response => {
         console.log("res", response);
         setSkillSelected(response.data);
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // handle error
         console.log(error);
       });
   };
   const getSkills = () => {
     axios
-    .get("/skillset-types",{params: {
-      designation_id: selectedOption
-      }}).then(response => {
+      .get("/skillset-types", {
+        params: {
+          designation_id: selectedOption
+        }
+      }).then(response => {
         console.log("res", response);
         setSkill(response.data);
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // handle error
         console.log(error);
       });
@@ -139,8 +141,8 @@ export default function ClinicProfileDetails(props) {
     data?.contract_type_id ? data?.contract_type_id : []
   );
 
-  
-  
+
+
   useEffect(() => {
     axios
       .get("user-informations", {
@@ -164,7 +166,7 @@ export default function ClinicProfileDetails(props) {
         userInfo.skillset_type_id = userInfo.skillset_type_id
           ? userInfo.skillset_type_id.split(/\s*,\s*/)
           : [];
-          setUserSelectedSkill(userInfo.skillset_type_id)
+        setUserSelectedSkill(userInfo.skillset_type_id)
         let contract_type_id = userInfo.contract_type_id
           ? userInfo.contract_type_id.split(/\s*,\s*/)
           : [];
@@ -215,7 +217,7 @@ export default function ClinicProfileDetails(props) {
 
 
 
- 
+
 
 
 
@@ -227,9 +229,9 @@ export default function ClinicProfileDetails(props) {
     data?.hours_time ? data?.hours_time : []
   );
 
-  
 
- 
+
+
   return (
     <>
       {data && (
@@ -240,9 +242,12 @@ export default function ClinicProfileDetails(props) {
                 className="in_user_top"
                 style={{ backgroundImage: `url("${banner_file}")` }}
               >
-              <a class="msg-btn" href="#" title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a>
+                <a class="msg-btn" href={`/messaging/?recipient=${
+                  // TODO: user_id
+                  '6'
+                  }`} title="Message"><i class="fa fa-comment" aria-hidden="true"></i> Message</a>
                 {/* <div class="saved_icon">  </div> */}
-                
+
 
                 {/* <div className="thumbnail-container">
                   <div className="thumbnail">
@@ -254,13 +259,13 @@ export default function ClinicProfileDetails(props) {
               </div>
               <div className="user_bottom_sec">
                 <div className="edit_in_dta">
-                  
+
                 </div>
 
                 <div className="user_left_sec">
                   <div className="use_image">
                     <div className="prof_in_dta">
-                      
+
                     </div>
 
                     <div className="thumbnail-container">
@@ -348,7 +353,7 @@ export default function ClinicProfileDetails(props) {
               </div>
             </div>
             {/* part onr start */}
-            
+
             {/* part one end */}
             <div className="exp_box_wrap">
               <div className="row">
@@ -360,7 +365,7 @@ export default function ClinicProfileDetails(props) {
 
                     <div className="ex_photos">
                       <div className="ex_photos_wrap">
-                        
+
                         {data.clinic_photos && data.clinic_photos.length > 0 ? (
                           data.clinic_photos.map(iamges => (
                             <div className="ex_photos_in">
@@ -376,7 +381,7 @@ export default function ClinicProfileDetails(props) {
                           ))
                         ) : (
                           <div className="ex_photos_in">
-                           No photo available
+                            No photo available
                           </div>
                         )}
                       </div>
@@ -386,7 +391,7 @@ export default function ClinicProfileDetails(props) {
 
                 {/* image popup start */}
 
-                
+
 
                 {/* image popup end */}
 
@@ -396,10 +401,10 @@ export default function ClinicProfileDetails(props) {
 
                 <div className="col-md-6 ind-col">
                   <div className="ex_box">
-                    
+
                     {(data?.skillset_type_id &&
                       data?.skillset_type_id.length > 0) ||
-                    (data?.hours_time && data?.hours_time.length > 0) ? (
+                      (data?.hours_time && data?.hours_time.length > 0) ? (
                       <>
                         <div className="ex_box_title">
                           <h2 className="ex_title">
@@ -419,27 +424,27 @@ export default function ClinicProfileDetails(props) {
                                 <ul>
                                   {/* <Link to="/#">{data.skillset_type_id}</Link> */}
                                   {data?.skillset_type_id &&
-                                  data?.skillset_type_id.length > 0
+                                    data?.skillset_type_id.length > 0
                                     ? data?.skillset_type_id.map(
-                                        (element, i) => {
-                                          return (
-                                            element,
-                                            skillSelected.map(val =>
-                                              val.id ==
+                                      (element, i) => {
+                                        return (
+                                          element,
+                                          skillSelected.map(val =>
+                                            val.id ==
                                               data?.skillset_type_id[i] ? (
-                                                <li>
-                                                  {" "}
-                                                  <p>
-                                                    {val.title}
-                                                  </p>{" "}
-                                                </li>
-                                              ) : (
-                                                ""
-                                              )
+                                              <li>
+                                                {" "}
+                                                <p>
+                                                  {val.title}
+                                                </p>{" "}
+                                              </li>
+                                            ) : (
+                                              ""
                                             )
-                                          );
-                                        }
-                                      )
+                                          )
+                                        );
+                                      }
+                                    )
                                     : "No record found"}
                                 </ul>
                               </div>
@@ -494,7 +499,7 @@ export default function ClinicProfileDetails(props) {
                     )}
                   </div>
                   {/* here */}
-                  
+
                   {/* end */}
                 </div>
               </div>
